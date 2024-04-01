@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:local="clr-namespace:AvaloniaRoguelike;assembly=AvaloniaRoguelike"
+        xmlns:model="clr-namespace:AvaloniaRoguelike.Model;assembly=AvaloniaRoguelike"
+        xmlns:tran="clr-namespace:Avalonia.Animation;assembly=Avalonia.Animation"
+        xmlns:infrastructure="clr-namespace:AvaloniaRoguelike.Infrastructure;assembly=AvaloniaRoguelike"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		x:Class="AvaloniaRoguelike.Views.MainWindow"
+        Title="AvaloniaRoguelike" Width="1280" Height="960" Design.DataContext="{x:Static model:GameField.DesignInstance}" >
+	<Window.Styles >
+		<Style Selector="ItemsControl > ContentPresenter">
+			<Setter Property="Canvas.Left" Value="{Binding Location.X}"/>
+			<Setter Property="Canvas.Top" Value="{Binding Location.Y}"/>
+			<Setter Property="ZIndex" Value="{Binding Converter={x:Static infrastructure:ZIndexConverter.Instance }}" />
+
+			<Setter Property="Transitions">
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="0:0:0:0.5"/>
+				</Transitions>
+			</Setter>
+
+		</Style>
+		<Style Selector="ItemsControl > ContentPresenter.test:pointerover">
+			<Setter Property="Opacity" Value="0.5"/>
+		</Style>
+	</Window.Styles>
+
+</Window>

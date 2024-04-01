@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:AvaloniaRoguelike.ViewModels"
+			 xmlns:local="clr-namespace:AvaloniaRoguelike;assembly=AvaloniaRoguelike"
+			 xmlns:model="clr-namespace:AvaloniaRoguelike.Model;assembly=AvaloniaRoguelike"
+			 xmlns:tran="clr-namespace:Avalonia.Animation;assembly=Avalonia.Animation"
+			 xmlns:infrastructure="clr-namespace:AvaloniaRoguelike.Infrastructure;assembly=AvaloniaRoguelike"
+             mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="960"
+             x:Class="AvaloniaRoguelike.Views.MainView"
+             x:DataType="vm:MainViewModel">
+  <Design.DataContext>
+    <vm:MainViewModel />
+  </Design.DataContext>
+	<ItemsControl
+				  ItemsSource="{Binding GameObjects}"
+				  Width="{Binding Width, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}"
+				  Height="{Binding Height, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}">
+
+		<ItemsControl.ItemsPanel>
+			<ItemsPanelTemplate>
+				<Canvas/>
+			</ItemsPanelTemplate>
+		</ItemsControl.ItemsPanel>
+
+		<ItemsControl.DataTemplates>
+			<DataTemplate DataType="{x:Type model:TerrainTile}">
+				<Image Width="32" Height="32"
+					   Source="{Binding Type, Converter={x:Static infrastructure:TerrainTileConverter.Instance}}"/>
+			</DataTemplate>
+
+			<DataTemplate DataType="{x:Type model:Player}">
+				<Border ClipToBounds="False">
+					<Border.Styles>
+						<Style Selector="Border">
+
+						</Style>
+					</Border.Styles>
+					<Image Width="32" Height="32"
+						   Source="/Assets/Player.png"
+						   RenderTransform="{Binding Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+				</Border>
+			</DataTemplate>
+		</ItemsControl.DataTemplates>
+	</ItemsControl>
+</UserControl>
