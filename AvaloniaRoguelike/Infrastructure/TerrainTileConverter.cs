@@ -16,13 +16,20 @@ namespace AvaloniaRoguelike.Infrastructure
 
         Dictionary<TerrainTileType, Bitmap> GetCache()
         {
-
-            return
-                _cache ??
-                (_cache = Enum.GetValues(typeof(TerrainTileType)).OfType<TerrainTileType>().ToDictionary(t => t, t =>
-                    new Bitmap(
-                        typeof(TerrainTileConverter).GetTypeInfo()
-                            .Assembly.GetManifestResourceStream($"AvaloniaRoguelike.Assets.{t}.png"))));
+            if (_cache == null)
+            {
+                _cache = Enum.GetValues(typeof(TerrainTileType))
+                    .OfType<TerrainTileType>()
+                    .ToDictionary(t => t, t =>
+                    {
+                        var resourceName = $"AvaloniaRoguelike.Assets.{t}.png";
+                        return new Bitmap(
+                            typeof(TerrainTileConverter)
+                            .GetTypeInfo()
+                            .Assembly.GetManifestResourceStream(resourceName));
+                    });
+            }
+            return _cache;
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => GetCache()[(TerrainTileType)value];

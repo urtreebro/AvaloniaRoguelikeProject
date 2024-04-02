@@ -28,7 +28,7 @@ public partial class App : Application
             var game = new Game(field);
             game.Start();
 
-            desktop.MainWindow = new MainWindow{};
+            desktop.MainWindow = new MainWindow(game, field);
         }
     }
 }

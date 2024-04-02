@@ -4,7 +4,7 @@
         xmlns:tran="clr-namespace:Avalonia.Animation;assembly=Avalonia.Animation"
         xmlns:infrastructure="clr-namespace:AvaloniaRoguelike.Infrastructure;assembly=AvaloniaRoguelike"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		x:Class="AvaloniaRoguelike.Views.MainWindow"
+				x:Class="AvaloniaRoguelike.Views.MainWindow"
         Title="AvaloniaRoguelike" Width="1280" Height="960" Design.DataContext="{x:Static model:GameField.DesignInstance}" >
 	<Window.Styles >
 		<Style Selector="ItemsControl > ContentPresenter">
@@ -24,9 +24,9 @@
 		</Style>
 	</Window.Styles>
 	<ItemsControl
-				  ItemsSource="{Binding GameObjects}"
-				  Width="{Binding Width, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}"
-				  Height="{Binding Height, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}">
+				  ItemsSource="{Binding GameField.GameObjects}"
+				  Width="{Binding GameField.Width, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}"
+				  Height="{Binding GameField.Height, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}">
 
 		<ItemsControl.ItemsPanel>
 			<ItemsPanelTemplate>
@@ -49,7 +49,7 @@
 					</Border.Styles>
 					<Image Width="32" Height="32"
 						   Source="/Assets/Player.png"
-						   RenderTransform="{Binding Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+						   RenderTransform="{Binding GameField.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
 				</Border>
 			</DataTemplate>
 		</ItemsControl.DataTemplates>

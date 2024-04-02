@@ -2,10 +2,12 @@
 using Avalonia;
 using AvaloniaRoguelike.Infrastructure;
 using System.Collections.ObjectModel;
+using AvaloniaRoguelike.ViewModels;
+using ReactiveUI;
 
 namespace AvaloniaRoguelike.Model
 {
-    public class GameField : PropertyChangedBase
+    public class GameField : ViewModelBase
     {
         public static GameField DesignInstance { get; } = new GameField();
         public const double CellSize = 32;
@@ -32,6 +34,7 @@ namespace AvaloniaRoguelike.Model
             Width = width;
             Height = height;
             Tiles = new TerrainTile[width, height];
+            // TODO: Deserialize field
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)

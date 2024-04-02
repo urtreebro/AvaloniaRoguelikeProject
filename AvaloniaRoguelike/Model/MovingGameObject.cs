@@ -41,6 +41,7 @@ namespace AvaloniaRoguelike.Model
             {
                 if (value.Equals(_targetCellLocation)) return;
                 _targetCellLocation = value;
+                // TODO: RaiseAndSetIfChanged
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsMoving));
             }

@@ -13,7 +13,8 @@ namespace AvaloniaRoguelike.Model
             get { return _location; }
             protected set
             {
-                if (value.Equals(_location)) return;
+                if (value.Equals(_location))
+                    return;
                 _location = value;
                 OnPropertyChanged();
             }
