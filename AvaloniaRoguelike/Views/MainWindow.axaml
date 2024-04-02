@@ -23,5 +23,35 @@
 			<Setter Property="Opacity" Value="0.5"/>
 		</Style>
 	</Window.Styles>
+	<ItemsControl
+				  ItemsSource="{Binding GameObjects}"
+				  Width="{Binding Width, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}"
+				  Height="{Binding Height, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}">
 
+		<ItemsControl.ItemsPanel>
+			<ItemsPanelTemplate>
+				<Canvas/>
+			</ItemsPanelTemplate>
+		</ItemsControl.ItemsPanel>
+
+		<ItemsControl.DataTemplates>
+			<DataTemplate DataType="{x:Type model:TerrainTile}">
+				<Image Width="32" Height="32"
+					   Source="{Binding Type, Converter={x:Static infrastructure:TerrainTileConverter.Instance}}"/>
+			</DataTemplate>
+
+			<DataTemplate DataType="{x:Type model:Player}">
+				<Border ClipToBounds="False">
+					<Border.Styles>
+						<Style Selector="Border">
+
+						</Style>
+					</Border.Styles>
+					<Image Width="32" Height="32"
+						   Source="/Assets/Player.png"
+						   RenderTransform="{Binding Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+				</Border>
+			</DataTemplate>
+		</ItemsControl.DataTemplates>
+	</ItemsControl>
 </Window>

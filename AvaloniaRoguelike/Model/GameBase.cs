@@ -7,7 +7,7 @@ namespace AvaloniaRoguelike.Model
     {
         public const int TicksPerSecond = 60;
         public long CurrentTick { get; private set; }
-        private readonly DispatcherTimer _timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 1000 / TicksPerSecond) };
+        private readonly DispatcherTimer _timer = new() { Interval = new TimeSpan(0, 0, 0, 0, 1000 / TicksPerSecond) };
 
 
         void DoTick()

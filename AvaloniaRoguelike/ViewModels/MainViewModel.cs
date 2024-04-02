@@ -1,5 +1,9 @@
-﻿namespace AvaloniaRoguelike.ViewModels;
+﻿using AvaloniaRoguelike.Model;
+using System.Collections.Generic;
 
-public class MainViewModel : ViewModelBase
+namespace AvaloniaRoguelike.ViewModels;
+
+public class MainViewModel(GameField field) : ViewModelBase
 {
+    ViewModelBase content = new GameViewModel(field.GameObjects);
 }
