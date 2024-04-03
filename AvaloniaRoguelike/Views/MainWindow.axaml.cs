@@ -6,7 +6,7 @@ using Avalonia.Markup.Xaml;
 using AvaloniaRoguelike.Model;
 using AvaloniaRoguelike.ViewModels;
 
-namespace AvaloniaRoguelike.Views;
+namespace AvaloniaRoguelike.Views{
 
 public partial class MainWindow : Window
 {
@@ -30,4 +30,5 @@ public partial class MainWindow : Window
         Keyboard.Keys.Remove(e.Key);
         base.OnKeyUp(e);
     }
+}
 }

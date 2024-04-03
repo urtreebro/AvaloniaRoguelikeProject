@@ -9,7 +9,7 @@ using AvaloniaRoguelike.Model;
 using AvaloniaRoguelike.ViewModels;
 using System;
 
-namespace AvaloniaRoguelike;
+namespace AvaloniaRoguelike{
 
 public partial class App : Application
 {
@@ -31,4 +31,5 @@ public partial class App : Application
             desktop.MainWindow = new MainWindow(game, field);
         }
     }
+}
 }

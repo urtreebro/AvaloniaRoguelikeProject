@@ -6,7 +6,7 @@ using ReactiveUI;
 
 using System.Reactive;
 
-namespace AvaloniaRoguelike.ViewModels;
+namespace AvaloniaRoguelike.ViewModels{
 
 public class MainWindowViewModel : ViewModelBase
 {
@@ -34,4 +34,5 @@ public class MainWindowViewModel : ViewModelBase
 
     //public void ButtonClick() => GameField.TempValue = "RogueLike";
     //public ReactiveCommand<Unit, Unit> ButtonClickCommand { get; }
+}
 }

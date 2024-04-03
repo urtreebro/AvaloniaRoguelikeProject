@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 
-namespace AvaloniaRoguelike.Views;
+namespace AvaloniaRoguelike.Views{
 
 public partial class MainView : UserControl
 {
@@ -11,4 +11,5 @@ public partial class MainView : UserControl
     {
         AvaloniaXamlLoader.Load(this);
     }
+}
 }
