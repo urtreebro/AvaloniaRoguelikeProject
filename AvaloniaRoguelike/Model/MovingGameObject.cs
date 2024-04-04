@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
+using ReactiveUI;
+
 
 namespace AvaloniaRoguelike.Model
 {
     public abstract class MovingGameObject : GameObject
     {
-        private readonly GameField _field;
+        private GameField _field;
         private Facing _facing;
         private CellLocation _cellLocation;
         private CellLocation _targetCellLocation;
@@ -18,7 +20,7 @@ namespace AvaloniaRoguelike.Model
             {
                 if (value == _facing) return;
                 _facing = value;
-                OnPropertyChanged();
+                _field.RaiseAndSetIfChanged(ref _facing, value);
             }
         }
 
@@ -27,10 +29,11 @@ namespace AvaloniaRoguelike.Model
             get { return _cellLocation; }
             private set
             {
+                _field.RaiseAndSetIfChanged(ref _cellLocation, value);
+                _field.RaiseAndSetIfChanged(ref _cellLocation, value, nameof(IsMoving));
                 if (value.Equals(_cellLocation)) return;
                 _cellLocation = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(IsMoving));
+                
             }
         }
 
@@ -39,11 +42,11 @@ namespace AvaloniaRoguelike.Model
             get { return _targetCellLocation; }
             private set
             {
+                _field.RaiseAndSetIfChanged(ref _targetCellLocation, value);
+                _field.RaiseAndSetIfChanged(ref _targetCellLocation, value, nameof(IsMoving));
                 if (value.Equals(_targetCellLocation)) return;
                 _targetCellLocation = value;
-                // TODO: RaiseAndSetIfChanged
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(IsMoving));
+                
             }
         }
 

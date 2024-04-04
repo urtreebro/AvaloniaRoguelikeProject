@@ -1,10 +1,11 @@
 ﻿using System;
 using Avalonia;
 using AvaloniaRoguelike.Infrastructure;
+using ReactiveUI;
 
 namespace AvaloniaRoguelike.Model
 {
-    public abstract class GameObject : PropertyChangedBase
+    public abstract class GameObject : ReactiveObject
     {
         private Point _location;
 
@@ -16,7 +17,7 @@ namespace AvaloniaRoguelike.Model
                 if (value.Equals(_location))
                     return;
                 _location = value;
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref _location, value);
             }
         }
 

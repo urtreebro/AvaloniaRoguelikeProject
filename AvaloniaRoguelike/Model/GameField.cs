@@ -10,7 +10,7 @@ namespace AvaloniaRoguelike.Model
     public class GameField : ViewModelBase
     {
         public static GameField DesignInstance { get; } = new GameField();
-        public const double CellSize = 32;
+        public const double CellSize = 40;
 
         public ObservableCollection<GameObject> GameObjects { get; } = new ObservableCollection<GameObject>();
 
@@ -20,7 +20,7 @@ namespace AvaloniaRoguelike.Model
         public int Height { get; }
         public int Width { get; }
 
-        public GameField() : this(40, 30) { }
+        public GameField() : this(24, 18) { }
 
         Random Random { get; } = new Random();
 
