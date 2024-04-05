@@ -32,11 +32,10 @@ namespace AvaloniaRoguelike.Infrastructure
             return _cache;
         }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => GetCache()[(TerrainTileType)value];
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) 
+            => GetCache()[(TerrainTileType)value];
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
     }
 }

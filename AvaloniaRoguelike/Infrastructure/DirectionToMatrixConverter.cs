@@ -21,7 +21,6 @@ namespace AvaloniaRoguelike.Infrastructure
             if (direction == Facing.East)
             {
                 matrix = Matrix.CreateRotation(1.5708);
-
             }
             if (direction == Facing.West)
             {

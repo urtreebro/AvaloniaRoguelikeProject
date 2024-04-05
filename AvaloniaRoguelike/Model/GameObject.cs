@@ -1,6 +1,5 @@
-﻿using System;
-using Avalonia;
-using AvaloniaRoguelike.Infrastructure;
+﻿using Avalonia;
+
 using ReactiveUI;
 
 namespace AvaloniaRoguelike.Model
@@ -14,9 +13,6 @@ namespace AvaloniaRoguelike.Model
             get { return _location; }
             protected set
             {
-                if (value.Equals(_location))
-                    return;
-                _location = value;
                 this.RaiseAndSetIfChanged(ref _location, value);
             }
         }

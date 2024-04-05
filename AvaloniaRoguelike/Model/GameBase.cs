@@ -5,12 +5,14 @@ namespace AvaloniaRoguelike.Model
 {
     public abstract class GameBase
     {
-        public const int TicksPerSecond = 60;
-        public long CurrentTick { get; private set; }
         private readonly DispatcherTimer _timer = new() { Interval = new TimeSpan(0, 0, 0, 0, 1000 / TicksPerSecond) };
 
+        protected GameBase()
+        {
+            _timer.Tick += delegate { DoTick(); };
+        }
 
-        void DoTick()
+        private void DoTick()
         {
             Tick();
             CurrentTick++;
@@ -18,10 +20,8 @@ namespace AvaloniaRoguelike.Model
 
         protected abstract void Tick();
 
-        protected GameBase()
-        {
-            _timer.Tick += delegate { DoTick(); };
-        }
+        public const int TicksPerSecond = 60;
+        public long CurrentTick { get; private set; }
 
         public void Start() => _timer.IsEnabled = true;
         public void Stop() => _timer.IsEnabled = false;

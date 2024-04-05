@@ -1,5 +1,4 @@
 ﻿using AvaloniaRoguelike.Model;
-using System.Collections.Generic;
 
 namespace AvaloniaRoguelike.ViewModels
 {

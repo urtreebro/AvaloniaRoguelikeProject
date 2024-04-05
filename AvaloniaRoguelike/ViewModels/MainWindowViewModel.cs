@@ -1,14 +1,11 @@
-﻿using Avalonia;
-
-using AvaloniaRoguelike.Model;
+﻿using AvaloniaRoguelike.Model;
 
 using ReactiveUI;
 
-using System.Reactive;
+namespace AvaloniaRoguelike.ViewModels
+{
 
-namespace AvaloniaRoguelike.ViewModels{
-
-public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase
 {
     private Game _game;
     private GameField _gameField;

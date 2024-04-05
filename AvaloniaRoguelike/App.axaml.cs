@@ -1,17 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using AvaloniaRoguelike.ViewModels;
 using AvaloniaRoguelike.Views;
-using AvaloniaRoguelike.Infrastructure;
 using AvaloniaRoguelike.Model;
-using AvaloniaRoguelike.ViewModels;
-using System;
 
-namespace AvaloniaRoguelike{
+namespace AvaloniaRoguelike
+{
 
-public partial class App : Application
+    public partial class App : Application
 {
     public override void Initialize()
     {

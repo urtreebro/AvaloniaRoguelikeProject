@@ -1,9 +1,7 @@
 ﻿using System;
 using Avalonia;
-using AvaloniaRoguelike.Infrastructure;
 using System.Collections.ObjectModel;
 using AvaloniaRoguelike.ViewModels;
-using ReactiveUI;
 
 namespace AvaloniaRoguelike.Model
 {
@@ -22,12 +20,7 @@ namespace AvaloniaRoguelike.Model
 
         public GameField() : this(24, 18) { }
 
-        Random Random { get; } = new Random();
-
-        TerrainTileType GetTypeForCoords(int x, int y)
-        {
-            return TerrainTileType.Plain;
-        }
+        //Random Random { get; } = new Random();
 
         public GameField(int width, int height)
         {
@@ -46,6 +39,11 @@ namespace AvaloniaRoguelike.Model
             }
             GameObjects.Add(
                 Player = new Player(this, new CellLocation(width / 2, height / 2), Facing.East));
+        }
+
+        private TerrainTileType GetTypeForCoords(int x, int y)
+        {
+            return TerrainTileType.Plain;
         }
     }
 }

@@ -12,7 +12,8 @@ namespace AvaloniaRoguelike.Model
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(null, obj)) 
+                return false;
             return obj is CellLocation && Equals((CellLocation)obj);
         }
 
@@ -30,7 +31,8 @@ namespace AvaloniaRoguelike.Model
 
         public override string ToString() => $"({X}:{Y})";
 
-        public Point ToPoint() => new Point(GameField.CellSize * X, GameField.CellSize * Y);
+        public Point ToPoint() 
+            => new Point(GameField.CellSize * X, GameField.CellSize * Y);
 
         public CellLocation(int x, int y)
         {
@@ -41,7 +43,10 @@ namespace AvaloniaRoguelike.Model
         public int X { get; }
         public int Y { get; }
 
-        public CellLocation WithX(int x) => new CellLocation(x, Y);
-        public CellLocation WithY(int y) => new CellLocation(X, y);
+        public CellLocation WithX(int x) 
+            => new CellLocation(x, Y);
+
+        public CellLocation WithY(int y) 
+            => new CellLocation(X, y);
     }
 }
