@@ -24,7 +24,6 @@ namespace AvaloniaRoguelike.ViewModels
         get => _gameField;
         set
         {
-            // TODO: масштабировать эту строчку на остальные свойства с OnPropertyChanged
             this.RaiseAndSetIfChanged(ref _gameField, value);
         }
     }

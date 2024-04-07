@@ -40,6 +40,11 @@ namespace AvaloniaRoguelike.Model
             Y = y;
         }
 
+        public CellLocation((int x, int y) coords)
+        {
+            X = coords.x;
+            Y = coords.y;
+        }
         public int X { get; }
         public int Y { get; }
 

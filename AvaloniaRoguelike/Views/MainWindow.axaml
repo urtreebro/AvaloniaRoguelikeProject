@@ -5,7 +5,7 @@
         xmlns:infrastructure="clr-namespace:AvaloniaRoguelike.Infrastructure;assembly=AvaloniaRoguelike"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="AvaloniaRoguelike.Views.MainWindow"
-        Title="AvaloniaRoguelike" Width="960" Height="720" Design.DataContext="{x:Static model:GameField.DesignInstance}" >
+        Title="AvaloniaRoguelike" Width="1024" Height="768" Design.DataContext="{x:Static model:GameField.DesignInstance}" >
 	<Window.Styles >
 		<Style Selector="ItemsControl > ContentPresenter">
 			<Setter Property="Canvas.Left" Value="{Binding Location.X}"/>
@@ -36,7 +36,7 @@
 
 		<ItemsControl.DataTemplates>
 			<DataTemplate DataType="{x:Type model:TerrainTile}">
-				<Image Width="40" Height="40"
+				<Image Width="32" Height="32"
 					   Source="{Binding Type, Converter={x:Static infrastructure:TerrainTileConverter.Instance}}"/>
 			</DataTemplate>
 
@@ -47,7 +47,7 @@
 
 						</Style>
 					</Border.Styles>
-					<Image Width="40" Height="40"
+					<Image Width="32" Height="32"
 						   Source="/Assets/Player.png"
 						   RenderTransform="{Binding GameField.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
 				</Border>

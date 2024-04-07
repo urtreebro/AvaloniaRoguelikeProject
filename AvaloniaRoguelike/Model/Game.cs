@@ -46,14 +46,6 @@ namespace AvaloniaRoguelike.Model
             {
                 _field.Player.SetTarget(facing);
             }
-            //if (Keyboard.IsKeyDown(Key.W))
-            //    _field.Player.SetTarget(Facing.North);
-            //else if (Keyboard.IsKeyDown(Key.S))
-            //    _field.Player.SetTarget(Facing.South);
-            //else if (Keyboard.IsKeyDown(Key.A))
-            //    _field.Player.SetTarget(Facing.West);
-            //else if (Keyboard.IsKeyDown(Key.D))
-            //    _field.Player.SetTarget(Facing.East);
         }
     }
 }

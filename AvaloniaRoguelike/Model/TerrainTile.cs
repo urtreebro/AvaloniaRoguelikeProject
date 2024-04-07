@@ -7,17 +7,23 @@ namespace AvaloniaRoguelike.Model
     public enum TerrainTileType
     {
         Plain, //passable, shoot-thru
+        Wall,
+        Background
     }
 
     public class TerrainTile : GameObject
     {
         private static readonly Dictionary<TerrainTileType, double> Speeds = new Dictionary<TerrainTileType, double>
         {
-            {TerrainTileType.Plain, 1}
+            {TerrainTileType.Plain, 1},
+            {TerrainTileType.Wall, 0},
+            {TerrainTileType.Background, 0}
         };
         private static readonly Dictionary<TerrainTileType, bool> ShootThrus = new Dictionary<TerrainTileType, bool>
         {
-            {TerrainTileType.Plain, true}
+            {TerrainTileType.Plain, true},
+            {TerrainTileType.Wall, false},
+            {TerrainTileType.Background, false},
         };
 
 
