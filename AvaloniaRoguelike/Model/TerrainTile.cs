@@ -8,7 +8,7 @@ namespace AvaloniaRoguelike.Model
     {
         Plain, //passable, shoot-thru
         Wall,
-        Background
+        Background,
     }
 
     public class TerrainTile : GameObject

@@ -18,6 +18,7 @@ namespace AvaloniaRoguelike.Model
 
         public Random Random { get; } = new Random();
         public Player Player { get; }
+        public Exit Exit { get; }
         public int Height { get; }
         public int Width { get; }
 
@@ -40,6 +41,8 @@ namespace AvaloniaRoguelike.Model
             }
             GameObjects.Add(
                 Player = new Player(this, new CellLocation(GetCoords()), Facing.East));
+            GameObjects.Add(
+                Exit = new Exit(new CellLocation(GetCoords()).ToPoint()));
         }
 
         private TerrainTileType GetTypeForCoords(int x, int y)
@@ -53,7 +56,7 @@ namespace AvaloniaRoguelike.Model
         {
             int x = Random.Next(0, Width);
             int y = Random.Next(0, Height);
-            while (!(Map[x, y] == "."))
+            while (!(Tiles[x, y].IsPassable))
             {
                 x = Random.Next(0, Width);
                 y = Random.Next(0, Height);
