@@ -43,6 +43,8 @@ namespace AvaloniaRoguelike.Model
                 Player = new Player(this, new CellLocation(GetCoords()), Facing.East));
             GameObjects.Add(
                 Exit = new Exit(new CellLocation(GetCoords()).ToPoint()));
+            GameObjects.Add(
+                Enemy = new Enemy(this, new CellLocation(GetCoords()), Facing.East)); //TODO: random facing
         }
 
         private TerrainTileType GetTypeForCoords(int x, int y)
