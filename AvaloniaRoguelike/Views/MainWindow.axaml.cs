@@ -11,12 +11,11 @@ namespace AvaloniaRoguelike.Views{
 public partial class MainWindow : Window
 {
     public MainWindow(
-        Game game,
-        GameField gameField)
+        Game game)
     {
         AvaloniaXamlLoader.Load(this);
         this.AttachDevTools();
-        DataContext = new MainWindowViewModel(game, gameField);
+        DataContext = new MainWindowViewModel(game);
     }
 
     protected override void OnKeyDown(KeyEventArgs e)

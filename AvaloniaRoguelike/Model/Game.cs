@@ -8,7 +8,7 @@ namespace AvaloniaRoguelike.Model
 {
     public class Game : GameBase
     {
-        private readonly GameField _field;
+        private GameField _field;
         private readonly Dictionary<Key, Facing> _keyFacingPairs = new Dictionary<Key, Facing>
         {
             { Key.W, Facing.North},
@@ -22,11 +22,22 @@ namespace AvaloniaRoguelike.Model
             _field = field;
         }
 
+        public GameField Field
+        {
+            get => _field;
+            set => _field = value;
+        }
+
         protected override void Tick()
         {
             SetPlayerMovingTarget();
 
             MoveGameObjects();
+
+            if (_field.Player.CellLocation.ToPoint() == _field.Exit.Location)
+            {
+                _field = new();
+            }
         }
 
         private void MoveGameObjects()

@@ -5,26 +5,24 @@ using ReactiveUI;
 namespace AvaloniaRoguelike.ViewModels
 {
 
-    public class MainWindowViewModel : ViewModelBase
+public class MainWindowViewModel : ViewModelBase
 {
     private Game _game;
     private GameField _gameField;
 
     public MainWindowViewModel(
-        Game game,
-        GameField gameField)
+        Game game)
     {
         _game = game;
-        _gameField = gameField;
         //ButtonClickCommand = ReactiveCommand.Create(ButtonClick);
     }
 
     public GameField GameField
     {
-        get => _gameField;
+        get => _game.Field;
         set
         {
-            this.RaiseAndSetIfChanged(ref _gameField, value);
+            this.RaiseAndSetIfChanged(ref _game.Field, value);
         }
     }
 

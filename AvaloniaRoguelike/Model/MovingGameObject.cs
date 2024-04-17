@@ -11,6 +11,20 @@ namespace AvaloniaRoguelike.Model
         private CellLocation _cellLocation;
         private CellLocation _targetCellLocation;
 
+        //stats
+        public int Hp{
+            get;
+            protected set;
+        }
+        public int Attack{
+            get;
+            protected set;
+        }
+        public double Speed{
+            get;
+            protected set;
+        }
+
         protected MovingGameObject(
             GameField field,
             CellLocation location,
