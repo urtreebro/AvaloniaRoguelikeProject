@@ -20,20 +20,25 @@ namespace AvaloniaRoguelike.Model
             get;
             protected set;
         }
-        public double Speed{
-            get;
-            protected set;
-        }
+        public double _speed;
 
         protected MovingGameObject(
             GameField field,
             CellLocation location,
-            Facing facing)
-            : base(location.ToPoint())
+            Facing facing,
+            int hp,
+            int attack,
+            double speed)
+            : base(location.ToPoint()),
+            
         {
             _field = field;
             Facing = facing;
             CellLocation = TargetCellLocation = location;
+            Hp = hp;
+            Attack = attack;
+            _speed = speed;
+
         }
         public override int Layer => 1;
 
