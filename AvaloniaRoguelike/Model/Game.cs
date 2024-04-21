@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ReactiveUI;
 
 using Avalonia.Input;
 
@@ -24,8 +25,11 @@ namespace AvaloniaRoguelike.Model
 
         public GameField Field
         {
-            get => _field;
-            set => _field = value;
+            get { return _field; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _field, value);
+            }
         }
 
         protected override void Tick()
@@ -34,15 +38,15 @@ namespace AvaloniaRoguelike.Model
 
             MoveGameObjects();
 
-            if (_field.Player.CellLocation.ToPoint() == _field.Exit.Location)
+            if (Field.Player.CellLocation.ToPoint() == Field.Exit.Location)
             {
-                _field = new();
+                Field = new();
             }
         }
 
         private void MoveGameObjects()
         {
-            foreach (var obj in _field.GameObjects.OfType<MovingGameObject>())
+            foreach (var obj in Field.GameObjects.OfType<MovingGameObject>())
             {
                 obj.MoveToTarget();
             }
@@ -50,13 +54,13 @@ namespace AvaloniaRoguelike.Model
 
         private void SetPlayerMovingTarget()
         {
-            if (_field.Player.IsMoving)
+            if (Field.Player.IsMoving)
             {
                 return;
             }
             if (_keyFacingPairs.TryGetValue(Keyboard.LastKeyPressed(), out var facing))
             {
-                _field.Player.SetTarget(facing);
+                Field.Player.SetTarget(facing);
             }
         }
     }

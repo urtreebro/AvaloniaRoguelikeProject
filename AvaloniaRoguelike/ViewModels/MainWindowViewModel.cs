@@ -1,32 +1,32 @@
 ﻿using AvaloniaRoguelike.Model;
-
 using ReactiveUI;
 
 namespace AvaloniaRoguelike.ViewModels
 {
-
-public class MainWindowViewModel : ViewModelBase
-{
-    private Game _game;
-    private GameField _gameField;
-
-    public MainWindowViewModel(
-        Game game)
+    public class MainWindowViewModel : ViewModelBase
     {
-        _game = game;
-        //ButtonClickCommand = ReactiveCommand.Create(ButtonClick);
-    }
+        private Game _game;
+        private GameField _gameField;
 
-    public GameField GameField
-    {
-        get => _game.Field;
-        set
+        public MainWindowViewModel(
+            Game game,
+            GameField gameField)
         {
-            this.RaiseAndSetIfChanged(ref _game.Field, value);
+            _game = game;
+            _gameField = gameField;
+            //ButtonClickCommand = ReactiveCommand.Create(ButtonClick);
         }
-    }
 
-    //public void ButtonClick() => GameField.TempValue = "RogueLike";
-    //public ReactiveCommand<Unit, Unit> ButtonClickCommand { get; }
-}
+        public GameField GameField
+        {
+            get => _gameField;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _gameField, value);
+            }
+        }
+
+        //public void ButtonClick() => GameField.TempValue = "RogueLike";
+        //public ReactiveCommand<Unit, Unit> ButtonClickCommand { get; }
+    }
 }

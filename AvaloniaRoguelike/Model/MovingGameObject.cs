@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia;
 using ReactiveUI;
 
 namespace AvaloniaRoguelike.Model
@@ -11,19 +14,6 @@ namespace AvaloniaRoguelike.Model
         private CellLocation _cellLocation;
         private CellLocation _targetCellLocation;
 
-        //stats
-        public int Hp{
-            get;
-            protected set;
-        }
-        public int Attack{
-            get;
-            protected set;
-        }
-        public double Speed{
-            get;
-            protected set;
-        }
 
         protected MovingGameObject(
             GameField field,

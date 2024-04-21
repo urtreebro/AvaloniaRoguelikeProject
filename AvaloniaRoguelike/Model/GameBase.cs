@@ -1,9 +1,10 @@
 ﻿using Avalonia.Threading;
 using System;
+using ReactiveUI;
 
 namespace AvaloniaRoguelike.Model
 {
-    public abstract class GameBase
+    public abstract class GameBase : ReactiveObject
     {
         private readonly DispatcherTimer _timer = new() { Interval = new TimeSpan(0, 0, 0, 0, 1000 / TicksPerSecond) };
 
