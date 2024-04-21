@@ -2,6 +2,7 @@
 using Avalonia;
 using System.Collections.ObjectModel;
 using AvaloniaRoguelike.ViewModels;
+using System.Threading.Tasks;
 
 namespace AvaloniaRoguelike.Model
 {
@@ -43,6 +44,12 @@ namespace AvaloniaRoguelike.Model
                 Player = new Player(this, new CellLocation(GetCoords()), Facing.East));
             GameObjects.Add(
                 Exit = new Exit(new CellLocation(GetCoords()).ToPoint()));
+
+            for (var c = 0; c < 5;)
+            {
+                c++;
+                GameObjects.Add(new Mummy(this, new CellLocation(GetCoords()), (Facing)Random.Next(4))); //TODO: Place on the field
+            }
         }
 
         private TerrainTileType GetTypeForCoords(int x, int y)

@@ -4,6 +4,7 @@ using System.Linq;
 using ReactiveUI;
 
 using Avalonia.Input;
+using System.Threading.Tasks;
 
 namespace AvaloniaRoguelike.Model
 {
@@ -18,6 +19,7 @@ namespace AvaloniaRoguelike.Model
             { Key.D, Facing.East}
         };
 
+        private static Random rnd = new Random();
         public Game(GameField field)
         {
             _field = field;
@@ -34,7 +36,19 @@ namespace AvaloniaRoguelike.Model
 
         protected override void Tick()
         {
+            //while (IsGameRunning()) 
+            //{ 
             SetPlayerMovingTarget();
+
+            foreach (var tank in _field.GameObjects.OfType<Mummy>())
+                if (!tank.IsMoving)
+                {
+                    if (!tank.SetTarget(tank.Facing))
+                    {
+                        if (!tank.SetTarget((Facing)rnd.Next(4)))
+                            tank.SetTarget(null);
+                    }
+                }
 
             MoveGameObjects();
 
@@ -62,6 +76,12 @@ namespace AvaloniaRoguelike.Model
             {
                 Field.Player.SetTarget(facing);
             }
+        }
+
+        private bool IsGameRunning()
+        {
+            if (Field.Player.IsAlive()) return true;
+            return false;
         }
     }
 }

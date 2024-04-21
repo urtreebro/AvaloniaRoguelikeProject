@@ -13,6 +13,8 @@ namespace AvaloniaRoguelike.Model
 {
     public abstract class Enemy : MovingGameObject
     {
-        public Enemy(GameField field, CellLocation location, Facing facing) : base(field, location, facing) { }
+        public Enemy(GameField field, CellLocation location, Facing facing, int hp, int attack, double speed) : base(field, location, facing, hp, attack, speed) { }
+
+        protected override double SpeedFactor => _speed * base.SpeedFactor;
     }
 }

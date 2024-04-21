@@ -8,24 +8,24 @@ namespace AvaloniaRoguelike
 {
 
     public partial class App : Application
+{
+    public override void Initialize()
     {
-        public override void Initialize()
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        base.OnFrameworkInitializationCompleted();
+
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            AvaloniaXamlLoader.Load(this);
-        }
+            var field = new GameField();
+            var game = new Game(field);
+            game.Start();
 
-        public override void OnFrameworkInitializationCompleted()
-        {
-            base.OnFrameworkInitializationCompleted();
-
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                var field = new GameField();
-                var game = new Game(field);
-                game.Start();
-
-                desktop.MainWindow = new MainWindow(game, field);
-            }
+            desktop.MainWindow = new MainWindow(game, field);
         }
     }
+}
 }

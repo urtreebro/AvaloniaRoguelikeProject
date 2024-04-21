@@ -52,6 +52,11 @@
 						   RenderTransform="{Binding GameField.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
 				</Border>
 			</DataTemplate>
+			<DataTemplate DataType="{x:Type model:Mummy}">
+				<Image Width="32" Height="32" 
+					   Source="/Assets/Mummy.png" 
+					   RenderTransform="{Binding GameField.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+			</DataTemplate>
 			<DataTemplate DataType="{x:Type model:Exit}">
 				<Border ClipToBounds="False">
 					<Border.Styles>
