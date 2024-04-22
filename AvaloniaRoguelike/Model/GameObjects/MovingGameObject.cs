@@ -15,42 +15,16 @@ namespace AvaloniaRoguelike.Model
         private CellLocation _targetCellLocation;
 
 
-        #region attributes
-        public int Hp
-        {
-            get;
-            protected set;
-        }
-        public int Attack
-        {
-            get;
-            protected set;
-        }
-        public double _speed;
-
-        public bool IsAlive()
-        {
-            if (Hp > 0) return true;
-            return false;
-        }
-        #endregion 
-
         protected MovingGameObject(
             GameField field,
             CellLocation location,
-            Facing facing,
-            int hp,
-            int attack,
-            double speed)
+            Facing facing)
             : base(location.ToPoint())
             
         {
             _field = field;
             Facing = facing;
             CellLocation = TargetCellLocation = location;
-            Hp = hp;
-            Attack = attack;
-            _speed = speed;
 
         }
     public override int Layer => 1;

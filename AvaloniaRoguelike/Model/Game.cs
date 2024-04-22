@@ -36,17 +36,15 @@ namespace AvaloniaRoguelike.Model
 
         protected override void Tick()
         {
-            //while (IsGameRunning()) 
-            //{ 
             SetPlayerMovingTarget();
 
-            foreach (var tank in _field.GameObjects.OfType<Mummy>())
-                if (!tank.IsMoving)
+            foreach (var enemy in _field.GameObjects.OfType<Enemy>())
+                if (!enemy.IsMoving)
                 {
-                    if (!tank.SetTarget(tank.Facing))
+                    if (!enemy.SetTarget(enemy.Facing))
                     {
-                        if (!tank.SetTarget((Facing)rnd.Next(4)))
-                            tank.SetTarget(null);
+                        if (!enemy.SetTarget((Facing)rnd.Next(4)))
+                            enemy.SetTarget(null);
                     }
                 }
 

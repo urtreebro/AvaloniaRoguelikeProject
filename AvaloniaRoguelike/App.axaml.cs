@@ -24,7 +24,7 @@ namespace AvaloniaRoguelike
             var game = new Game(field);
             game.Start();
 
-            desktop.MainWindow = new MainWindow(game, field);
+            desktop.MainWindow = new MainWindow(game);
         }
     }
 }

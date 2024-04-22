@@ -11,7 +11,7 @@ using Avalonia;
 
 namespace AvaloniaRoguelike.Model
 {
-    public abstract class Enemy : MovingGameObject
+    public abstract class Enemy : AliveGameObject, IEnemy
     {
         public Enemy(GameField field, CellLocation location, Facing facing, int hp, int attack, double speed) : base(field, location, facing, hp, attack, speed) { }
 

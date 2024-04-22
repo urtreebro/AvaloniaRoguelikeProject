@@ -45,10 +45,9 @@ namespace AvaloniaRoguelike.Model
             GameObjects.Add(
                 Exit = new Exit(new CellLocation(GetCoords()).ToPoint()));
 
-            for (var c = 0; c < 5;)
+            for (var c = 0; c < 5; c++)
             {
-                c++;
-                GameObjects.Add(new Mummy(this, new CellLocation(GetCoords()), (Facing)Random.Next(4))); //TODO: Place on the field
+                GameObjects.Add(new Mummy(this, new CellLocation(GetCoords()), (Facing)Random.Next(4)));
             }
         }
 

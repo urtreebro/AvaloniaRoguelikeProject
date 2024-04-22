@@ -24,9 +24,9 @@
 		</Style>
 	</Window.Styles>
 	<ItemsControl
-				  ItemsSource="{Binding GameField.GameObjects}"
-				  Width="{Binding GameField.Width, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}"
-				  Height="{Binding GameField.Height, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}">
+				  ItemsSource="{Binding Game.Field.GameObjects}"
+				  Width="{Binding Game.Field.Width, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}"
+				  Height="{Binding Game.Field.Height, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}">
 
 		<ItemsControl.ItemsPanel>
 			<ItemsPanelTemplate>
@@ -49,13 +49,13 @@
 					</Border.Styles>
 					<Image Width="32" Height="32"
 						   Source="/Assets/Player.png"
-						   RenderTransform="{Binding GameField.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+						   RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
 				</Border>
 			</DataTemplate>
 			<DataTemplate DataType="{x:Type model:Mummy}">
 				<Image Width="32" Height="32" 
 					   Source="/Assets/Mummy.png" 
-					   RenderTransform="{Binding GameField.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+					   RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
 			</DataTemplate>
 			<DataTemplate DataType="{x:Type model:Exit}">
 				<Border ClipToBounds="False">
