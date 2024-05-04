@@ -217,12 +217,12 @@ namespace AvaloniaRoguelike.Model
 
 
         //A* pathfinding
-        public static List<Point> FindPath(int[,] field, Point start, Point goal)
+        public static List<Point> FindPath(string[,] field, Point start, Point goal)
         {
-            var closedSet = new Collection<PathNode>();
-            var openSet = new Collection<PathNode>();
+            var closedSet = new Collection<CellLocation>();
+            var openSet = new Collection<CellLocation>();
 
-            PathNode startNode = new PathNode()
+            CellLocation startNode = new CellLocation()
             {
                 Position = start,
                 CameFrom = null,
@@ -272,9 +272,9 @@ namespace AvaloniaRoguelike.Model
             return Convert.ToInt32(Math.Abs(from.X - to.X) + Math.Abs(from.Y - to.Y));
         }
 
-        private static Collection<PathNode> GetNeighbours(PathNode pathNode, Point goal, int[,] field)
+        private static Collection<CellLocation> GetNeighbours(CellLocation pathNode, Point goal, string[,] field)
         {
-            var result = new Collection<PathNode>();
+            var result = new Collection<CellLocation>();
 
             // Соседними точками являются соседние по стороне клетки.
             Point[] neighbourPoints = new Point[4];
@@ -290,11 +290,13 @@ namespace AvaloniaRoguelike.Model
                     continue;
                 if (point.Y < 0 || point.Y >= field.GetLength(1))
                     continue;
+
+                //TODO: ask Ren abt the map
                 // Проверяем, что по клетке можно ходить.
-                if ((field[(int)point.X, (int)point.Y] != 0) && (field[(int)point.X, (int)point.Y] != 1))
+                if ((field[(int)point.X, (int)point.Y] != "#") || (field[(int)point.X, (int)point.Y] != "#"))
                     continue;
                 // Заполняем данные для точки маршрута.
-                var neighbourNode = new PathNode()
+                var neighbourNode = new CellLocation()
                 {
                     Position = point,
                     CameFrom = pathNode,
@@ -307,7 +309,7 @@ namespace AvaloniaRoguelike.Model
             return result;
         }
 
-        private static List<Point> GetPathForNode(PathNode pathNode)
+        private static List<Point> GetPathForNode(CellLocation pathNode)
         {
             var result = new List<Point>();
             var currentNode = pathNode;
@@ -322,23 +324,23 @@ namespace AvaloniaRoguelike.Model
 
     }
 
-    public class PathNode
-    {
-        // Координаты точки на карте.
-        public Point Position { get; set; }
-        // Длина пути от старта (G).
-        public int PathLengthFromStart { get; set; }
-        // Точка, из которой пришли в эту точку.
-        public PathNode CameFrom { get; set; }
-        // Примерное расстояние до цели (H).
-        public int HeuristicEstimatePathLength { get; set; }
-        // Ожидаемое полное расстояние до цели (F).
-        public int EstimateFullPathLength
-        {
-            get
-            {
-                return this.PathLengthFromStart + this.HeuristicEstimatePathLength;
-            }
-        }
-    }
+    //public class PathNode
+    //{
+    //    // Координаты точки на карте.
+    //    public Point Position { get; set; }
+    //    // Длина пути от старта (G).
+    //    public int PathLengthFromStart { get; set; }
+    //    // Точка, из которой пришли в эту точку.
+    //    public PathNode CameFrom { get; set; }
+    //    // Примерное расстояние до цели (H).
+    //    public int HeuristicEstimatePathLength { get; set; }
+    //    // Ожидаемое полное расстояние до цели (F).
+    //    public int EstimateFullPathLength
+    //    {
+    //        get
+    //        {
+    //            return this.PathLengthFromStart + this.HeuristicEstimatePathLength;
+    //        }
+    //    }
+    //}
 }
