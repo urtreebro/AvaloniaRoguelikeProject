@@ -2,26 +2,25 @@
 
 using ReactiveUI;
 
-namespace AvaloniaRoguelike.Model
+namespace AvaloniaRoguelike.Model;
+
+public abstract class GameObject : ReactiveObject
 {
-    public abstract class GameObject : ReactiveObject
+    private Point _location;
+
+    public Point Location
     {
-        private Point _location;
-
-        public Point Location
+        get { return _location; }
+        protected set
         {
-            get { return _location; }
-            protected set
-            {
-                this.RaiseAndSetIfChanged(ref _location, value);
-            }
+            this.RaiseAndSetIfChanged(ref _location, value);
         }
+    }
 
-        public virtual int Layer => 0;
+    public virtual int Layer => 0;
 
-        protected GameObject(Point location)
-        {
-            Location = location;
-        }
+    protected GameObject(Point location)
+    {
+        Location = location;
     }
 }

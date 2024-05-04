@@ -1,77 +1,72 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
 
-namespace AvaloniaRoguelike.Model
+namespace AvaloniaRoguelike.Model;
+
+// TODO: evma, rename to MapCell?
+public struct CellLocation
 {
-    public struct CellLocation
+    public CellLocation(int x, int y)
     {
-        public bool Equals(CellLocation other)
+        X = x;
+        Y = y;
+    }
+
+    public CellLocation((int x, int y) coords)
+    {
+        X = coords.x;
+        Y = coords.y;
+    }
+
+    public int X { get; }
+    public int Y { get; }
+
+    public readonly CellLocation WithX(int x)
+        => new(x, Y);
+
+    public readonly CellLocation WithY(int y)
+        => new(X, y);
+
+    public readonly CellLocation WithXPlus(int xDelta)
+        => new(X + xDelta, Y);
+
+    public readonly CellLocation WithYPlus(int yDelta)
+        => new(X, Y + yDelta);
+
+    public readonly CellLocation WithXMinus(int xDelta)
+        => new(X - xDelta, Y);
+
+    public readonly CellLocation WithYMinus(int yDelta)
+        => new(X, Y - yDelta);
+
+    public readonly bool Equals(CellLocation other)
+    {
+        return X == other.X && Y == other.Y;
+    }
+
+    public override readonly bool Equals(object obj)
+    {
+        if (obj is null) 
+            return false;
+        return obj is CellLocation location && Equals(location);
+    }
+
+    public static bool operator ==(CellLocation l1, CellLocation l2) 
+        => l1.Equals(l2);
+
+    public static bool operator !=(CellLocation l1, CellLocation l2) 
+        => !(l1 == l2);
+
+    public override int GetHashCode()
+    {
+        unchecked
         {
-            return X == other.X && Y == other.Y;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) 
-                return false;
-            return obj is CellLocation && Equals((CellLocation)obj);
-        }
-
-        public static bool operator ==(CellLocation l1, CellLocation l2) => l1.Equals(l2);
-
-        public static bool operator !=(CellLocation l1, CellLocation l2) => !(l1 == l2);
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (X * 397) ^ Y;
-            }
-        }
-
-        public override string ToString() => $"({X}:{Y})";
-
-        public Point ToPoint() 
-            => new Point(GameField.CellSize * X, GameField.CellSize * Y);
-
-        public CellLocation(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public CellLocation((int x, int y) coords)
-        {
-            X = coords.x;
-            Y = coords.y;
-        }
-        public int X { get; }
-        public int Y { get; }
-
-        public CellLocation WithX(int x) 
-            => new CellLocation(x, Y);
-
-        public CellLocation WithY(int y) 
-            => new CellLocation(X, y);
-
-
-        //for astar
-
-        // Координаты точки на карте.
-        public Point Position { get; set; }
-        // Длина пути от старта (G).
-        public int PathLengthFromStart { get; set; }
-        // Точка, из которой пришли в эту точку.
-        public CellLocation CameFrom { get; set; }
-        // Примерное расстояние до цели (H).
-        public int HeuristicEstimatePathLength { get; set; }
-        // Ожидаемое полное расстояние до цели (F).
-        public int EstimateFullPathLength
-        {
-            get
-            {
-                return this.PathLengthFromStart + this.HeuristicEstimatePathLength;
-            }
+            return (X * 397) ^ Y;
         }
     }
+
+    public override readonly string ToString() 
+        => $"({X}:{Y})";
+
+    public readonly Point ToPoint()
+        => new(GameField.CellSize * X, GameField.CellSize * Y);
 }

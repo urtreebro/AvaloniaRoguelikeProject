@@ -1,32 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia;
+
+using AvaloniaRoguelike.Services;
+
 using ReactiveUI;
 
-namespace AvaloniaRoguelike.Model
+namespace AvaloniaRoguelike.Model;
+
+public abstract class MovingGameObject : GameObject
 {
-    public abstract class MovingGameObject : GameObject
+    private GameField _field;
+    private Facing _facing;
+    private CellLocation _cellLocation;
+    private CellLocation _targetCellLocation;
+
+    private readonly IPathFindingService _pathFindingService;
+
+    public MovingGameObject(
+        GameField field,
+        CellLocation location,
+        Facing facing,
+        IPathFindingService pathFindingService)
+        : base(location.ToPoint())
     {
-        private GameField _field;
-        private Facing _facing;
-        private CellLocation _cellLocation;
-        private CellLocation _targetCellLocation;
+        _field = field;
+        Facing = facing;
+        CellLocation = TargetCellLocation = location;
+        _pathFindingService = pathFindingService;
+    }
 
-
-        protected MovingGameObject(
-            GameField field,
-            CellLocation location,
-            Facing facing)
-            : base(location.ToPoint())
-            
-        {
-            _field = field;
-            Facing = facing;
-            CellLocation = TargetCellLocation = location;
-
-        }
     public override int Layer => 1;
 
     public Facing Facing
@@ -45,6 +48,7 @@ namespace AvaloniaRoguelike.Model
         {
             this.RaiseAndSetIfChanged(ref _cellLocation, value);
             this.RaiseAndSetIfChanged(ref _cellLocation, value, nameof(IsMoving));
+            Location = CellLocation.ToPoint();
         }
     }
 
@@ -65,13 +69,14 @@ namespace AvaloniaRoguelike.Model
     public bool SetTarget(Facing? facing)
         => SetTarget(facing.HasValue ? GetTileAtDirection(facing.Value) : CellLocation);
 
-    private double GetSpeed()
+    private int GetSpeed()
     {
-        double speed = GameField.CellSize *
-                    (_field.Tiles[CellLocation.X, CellLocation.Y].Speed +
-                     _field.Tiles[TargetCellLocation.X, TargetCellLocation.Y].Speed) / 2
-                    * SpeedFactor;
-        return speed;
+        //double speed = GameField.CellSize *
+        //            (_field.Tiles[CellLocation.X, CellLocation.Y].Speed +
+        //             _field.Tiles[TargetCellLocation.X, TargetCellLocation.Y].Speed) / 2
+        //            * SpeedFactor;
+        //return speed;
+        return 1;
     }
 
     public void MoveToTarget()
@@ -79,79 +84,48 @@ namespace AvaloniaRoguelike.Model
         if (TargetCellLocation == CellLocation)
             return;
 
-        // TODO: extract to methods 
+        var path = _pathFindingService.FindPath(_field.Map, CellLocation, TargetCellLocation);
+        var nextPathCell = path.First().Position;
+        var direction = GetDirection(CellLocation, nextPathCell);
         var speed = GetSpeed();
-        var pos = Location;
-        var direction = GetDirection(CellLocation, TargetCellLocation);
 
-        switch (direction)
-        {
-            case Facing.North:
-                pos = pos.WithY(pos.Y - speed);
-                Location = pos;
-                if (pos.Y / GameField.CellSize <= TargetCellLocation.Y)
-                    SetLocation(TargetCellLocation);
-                break;
-            case Facing.South:
-                pos = pos.WithY(pos.Y + speed);
-                Location = pos;
-                if (pos.Y / GameField.CellSize >= TargetCellLocation.Y)
-                    SetLocation(TargetCellLocation);
-                break;
-            case Facing.West:
-                pos = pos.WithX(pos.X - speed);
-                Location = pos;
-                if (pos.X / GameField.CellSize <= TargetCellLocation.X)
-                    SetLocation(TargetCellLocation);
-                break;
-            case Facing.East:
-                pos = pos.WithX(pos.X + speed);
-                Location = pos;
-                if (pos.X / GameField.CellSize >= TargetCellLocation.X)
-                    SetLocation(TargetCellLocation);
-                break;
-        }
-        //if (direction == Facing.North)
-        //{
-        //    pos = pos.WithY(pos.Y - speed);
-        //    Location = pos;
-        //    if (pos.Y / GameField.CellSize <= TargetCellLocation.Y)
-        //        SetLocation(TargetCellLocation);
-        //}
-        //else if (direction == Facing.South)
-        //{
-        //    pos = pos.WithY(pos.Y + speed);
-        //    Location = pos;
-        //    if (pos.Y / GameField.CellSize >= TargetCellLocation.Y)
-        //        SetLocation(TargetCellLocation);
-        //}
-        //else if (direction == Facing.West)
-        //{
-        //    pos = pos.WithX(pos.X - speed);
-        //    Location = pos;
-        //    if (pos.X / GameField.CellSize <= TargetCellLocation.X)
-        //        SetLocation(TargetCellLocation);
-        //}
-        //else if (direction == Facing.East)
-        //{
-        //    pos = pos.WithX(pos.X + speed);
-        //    Location = pos;
-        //    if (pos.X / GameField.CellSize >= TargetCellLocation.X)
-        //        SetLocation(TargetCellLocation);
-        //}
+        CellLocation = GetNewCellLocation(direction, nextPathCell, speed);
     }
+
+    private CellLocation GetNewCellLocation(
+        Facing direction,
+        CellLocation nextPathCell,
+        int speed)
+    {
+        var movingRules = new Dictionary<Facing, Func<bool>>
+        {
+            {Facing.North, () => CellLocation.Y - speed <= nextPathCell.Y },
+            {Facing.South, () => CellLocation.Y + speed >= nextPathCell.Y },
+            {Facing.West, () => CellLocation.X - speed <= nextPathCell.X },
+            {Facing.East, () => CellLocation.X + speed >= nextPathCell.X }
+        };
+
+        if (movingRules[direction]())
+            return nextPathCell;
+        return CellLocation;
+    }
+
 
     private bool SetTarget(CellLocation loc)
     {
-        if (IsMoving) throw new InvalidOperationException("Unable to change direction while moving");
+        if (IsMoving)
+            throw new InvalidOperationException("Unable to change direction while moving");
 
-        if (loc == CellLocation) return true;
+        if (loc == CellLocation) 
+            return true;
 
         Facing = GetDirection(CellLocation, loc);
 
-        if (IsLocationOutOfBounds(loc)) return false;
+        if (IsLocationOutOfBounds(loc)) 
+            return false;
 
-        if (!IsTilePassable(loc)) return false;
+        if (!IsTilePassable(loc)) 
+            return false;
 
         if (CheckIfDestinationMatchesTarget(loc))
             return false;
@@ -174,25 +148,18 @@ namespace AvaloniaRoguelike.Model
     private bool IsLocationOutOfBounds(CellLocation loc)
     {
         return (loc.X < 0 || loc.Y < 0) || (loc.X >= _field.Width || loc.Y >= _field.Height);
-
     }
 
     private CellLocation GetTileAtDirection(Facing facing)
     {
-        //if (facing == Facing.North)
-        //    return CellLocation.WithY(CellLocation.Y - 1);
-        //if (facing == Facing.South)
-        //    return CellLocation.WithY(CellLocation.Y + 1);
-        //if (facing == Facing.West)
-        //    return CellLocation.WithX(CellLocation.X - 1);
-        //return CellLocation.WithX(CellLocation.X + 1);
-
         return facing switch
         {
+            // TODO: evma, не создавать новую клетку, а получать нужную клетку карты по координатам
             Facing.North => CellLocation.WithY(CellLocation.Y - 1),
             Facing.South => CellLocation.WithY(CellLocation.Y + 1),
             Facing.West => CellLocation.WithX(CellLocation.X - 1),
             Facing.East => CellLocation.WithX(CellLocation.X + 1),
+            _ => throw new NotImplementedException(),
         };
     }
 
@@ -213,134 +180,4 @@ namespace AvaloniaRoguelike.Model
         CellLocation = loc;
         Location = loc.ToPoint();
     }
-
-
-
-        //A* pathfinding
-        public static List<Point> FindPath(string[,] field, Point start, Point goal)
-        {
-            var closedSet = new Collection<CellLocation>();
-            var openSet = new Collection<CellLocation>();
-
-            CellLocation startNode = new CellLocation()
-            {
-                Position = start,
-                CameFrom = null,
-                PathLengthFromStart = 0,
-                HeuristicEstimatePathLength = GetHeuristicPathLength(start, goal)
-            };
-            openSet.Add(startNode);
-            while (openSet.Count > 0)
-            {
-                var currentNode = openSet.OrderBy(node =>
-                  node.EstimateFullPathLength).First();
-
-                if (currentNode.Position == goal)
-                    return GetPathForNode(currentNode);
-
-                openSet.Remove(currentNode);
-                closedSet.Add(currentNode);
-
-                foreach (var neighbourNode in GetNeighbours(currentNode, goal, field))
-                {
-                    if (closedSet.Count(node => node.Position == neighbourNode.Position) > 0)
-                        continue;
-                    var openNode = openSet.FirstOrDefault(node =>
-                      node.Position == neighbourNode.Position);
-
-                    if (openNode == null)
-                        openSet.Add(neighbourNode);
-                    else
-                      if (openNode.PathLengthFromStart > neighbourNode.PathLengthFromStart)
-                    {
-                        openNode.CameFrom = currentNode;
-                        openNode.PathLengthFromStart = neighbourNode.PathLengthFromStart;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private static int GetDistanceBetweenNeighbours()
-        {
-            //можно переписать в зависимости от ландшафта
-            return 1;
-        }
-
-        private static int GetHeuristicPathLength(Point from, Point to)
-        {
-            return Convert.ToInt32(Math.Abs(from.X - to.X) + Math.Abs(from.Y - to.Y));
-        }
-
-        private static Collection<CellLocation> GetNeighbours(CellLocation pathNode, Point goal, string[,] field)
-        {
-            var result = new Collection<CellLocation>();
-
-            // Соседними точками являются соседние по стороне клетки.
-            Point[] neighbourPoints = new Point[4];
-            neighbourPoints[0] = new Point(pathNode.Position.X + 1, pathNode.Position.Y);
-            neighbourPoints[1] = new Point(pathNode.Position.X - 1, pathNode.Position.Y);
-            neighbourPoints[2] = new Point(pathNode.Position.X, pathNode.Position.Y + 1);
-            neighbourPoints[3] = new Point(pathNode.Position.X, pathNode.Position.Y - 1);
-
-            foreach (var point in neighbourPoints)
-            {
-                // Проверяем, что не вышли за границы карты.
-                if (point.X < 0 || point.X >= field.GetLength(0))
-                    continue;
-                if (point.Y < 0 || point.Y >= field.GetLength(1))
-                    continue;
-
-                //TODO: ask Ren abt the map
-                // Проверяем, что по клетке можно ходить.
-                if ((field[(int)point.X, (int)point.Y] != "#") || (field[(int)point.X, (int)point.Y] != "#"))
-                    continue;
-                // Заполняем данные для точки маршрута.
-                var neighbourNode = new CellLocation()
-                {
-                    Position = point,
-                    CameFrom = pathNode,
-                    PathLengthFromStart = pathNode.PathLengthFromStart +
-                    GetDistanceBetweenNeighbours(),
-                    HeuristicEstimatePathLength = GetHeuristicPathLength(point, goal)
-                };
-                result.Add(neighbourNode);
-            }
-            return result;
-        }
-
-        private static List<Point> GetPathForNode(CellLocation pathNode)
-        {
-            var result = new List<Point>();
-            var currentNode = pathNode;
-            while (currentNode != null)
-            {
-                result.Add(currentNode.Position);
-                currentNode = currentNode.CameFrom;
-            }
-            result.Reverse();
-            return result;
-        }
-
-    }
-
-    //public class PathNode
-    //{
-    //    // Координаты точки на карте.
-    //    public Point Position { get; set; }
-    //    // Длина пути от старта (G).
-    //    public int PathLengthFromStart { get; set; }
-    //    // Точка, из которой пришли в эту точку.
-    //    public PathNode CameFrom { get; set; }
-    //    // Примерное расстояние до цели (H).
-    //    public int HeuristicEstimatePathLength { get; set; }
-    //    // Ожидаемое полное расстояние до цели (F).
-    //    public int EstimateFullPathLength
-    //    {
-    //        get
-    //        {
-    //            return this.PathLengthFromStart + this.HeuristicEstimatePathLength;
-    //        }
-    //    }
-    //}
 }

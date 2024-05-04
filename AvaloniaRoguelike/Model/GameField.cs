@@ -53,8 +53,10 @@ namespace AvaloniaRoguelike.Model
 
         private TerrainTileType GetTypeForCoords(int x, int y)
         {
-            if (Map[x, y] == ".") return TerrainTileType.Plain;
-            else if (Map[x, y] == "#") return TerrainTileType.Wall;
+            if (Map[x, y] == ".") 
+                return TerrainTileType.Plain;
+            else if (Map[x, y] == "#") 
+                return TerrainTileType.Wall;
             return TerrainTileType.Background;
         }
 
