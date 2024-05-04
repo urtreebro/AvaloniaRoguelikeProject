@@ -6,11 +6,13 @@ namespace AvaloniaRoguelike.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private Game _game;
+        private ViewModelBase content;
 
         public MainWindowViewModel(
             Game game)
         {
-            _game = game;
+            Content = new MainViewModel(game);
+            Game = game;
             //ButtonClickCommand = ReactiveCommand.Create(ButtonClick);
         }
 
@@ -21,6 +23,11 @@ namespace AvaloniaRoguelike.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _game, value);
             }
+        }
+        public ViewModelBase Content
+        {
+            get => content;
+            private set => this.RaiseAndSetIfChanged(ref content, value);
         }
 
         //public void ButtonClick() => GameField.TempValue = "RogueLike";

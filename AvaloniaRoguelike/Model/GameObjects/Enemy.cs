@@ -1,20 +1,22 @@
-﻿using Avalonia.Controls.Shapes;
-using DynamicData;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Avalonia;
+﻿using Avalonia;
 
 namespace AvaloniaRoguelike.Model
 {
     public abstract class Enemy : AliveGameObject, IEnemy
     {
-        public Enemy(GameField field, CellLocation location, Facing facing, int hp, int attack, double speed) : base(field, location, facing, hp, attack, speed) { }
+        public int EnemyLvl { get; protected set; }
+        public Enemy(GameField field, CellLocation location, Facing facing, int enemylvl) : base(field, location, facing) 
+        {
+            EnemyLvl = enemylvl;
+            HP = GetHpByLvl();
+            Attack = GetAttackByLvl();
+            Speed = GetSpeedByLvl();
+        }
 
-        protected override double SpeedFactor => _speed * base.SpeedFactor;
+        protected override double SpeedFactor => Speed * base.SpeedFactor;
+
+        protected abstract int GetHpByLvl();
+        protected abstract int GetAttackByLvl();
+        protected abstract double GetSpeedByLvl();
     }
 }

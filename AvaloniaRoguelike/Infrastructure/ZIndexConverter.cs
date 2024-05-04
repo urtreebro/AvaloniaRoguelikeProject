@@ -15,6 +15,8 @@ namespace AvaloniaRoguelike.Infrastructure
         {
             if (value is Player)
                 return 2;
+            if (value is Enemy) 
+                return 1;
             else 
                 return 0;
         }

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ReactiveUI;
-
 using Avalonia.Input;
-using System.Threading.Tasks;
 
 namespace AvaloniaRoguelike.Model
 {
@@ -20,6 +18,7 @@ namespace AvaloniaRoguelike.Model
         };
 
         private static Random rnd = new Random();
+
         public Game(GameField field)
         {
             _field = field;
@@ -38,21 +37,18 @@ namespace AvaloniaRoguelike.Model
         {
             SetPlayerMovingTarget();
 
-            foreach (var enemy in _field.GameObjects.OfType<Enemy>())
-                if (!enemy.IsMoving)
-                {
-                    if (!enemy.SetTarget(enemy.Facing))
-                    {
-                        if (!enemy.SetTarget((Facing)rnd.Next(4)))
-                            enemy.SetTarget(null);
-                    }
-                }
+            SetEnemyMovingTarget();
 
             MoveGameObjects();
 
             if (Field.Player.CellLocation.ToPoint() == Field.Exit.Location)
             {
-                Field = new();
+                Field = new(Lvl);
+            }
+
+            if (Field.Player.IsNewLvl())
+            {
+                LvlUp();
             }
         }
 
@@ -76,10 +72,29 @@ namespace AvaloniaRoguelike.Model
             }
         }
 
+        private void SetEnemyMovingTarget()
+        {
+            foreach (var enemy in _field.GameObjects.OfType<Enemy>())
+                if (!enemy.IsMoving)
+                {
+                    if (!enemy.SetTarget(enemy.Facing))
+                    {
+                        if (!enemy.SetTarget((Facing)rnd.Next(4)))
+                            enemy.SetTarget(null);
+                    }
+                }
+        }
+
         private bool IsGameRunning()
         {
             if (Field.Player.IsAlive()) return true;
             return false;
+        }
+
+        private void LvlUp()
+        {
+            Lvl++;
+            Field.Player.LvlUp();
         }
     }
 }

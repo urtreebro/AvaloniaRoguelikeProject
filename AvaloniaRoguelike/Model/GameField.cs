@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace AvaloniaRoguelike.Model
 {
-    public class GameField : ViewModelBase
+    public class GameField
     {
-        public static GameField DesignInstance { get; } = new GameField();
+        public static GameField DesignInstance { get; } = new GameField(0);
         public const double CellSize = 32;
 
         public ObservableCollection<GameObject> GameObjects { get; } = new ObservableCollection<GameObject>();
@@ -18,17 +18,19 @@ namespace AvaloniaRoguelike.Model
         public Map Map { get; } = new Map();
 
         public Random Random { get; } = new Random();
+        public int Lvl { get; }
         public Player Player { get; }
         public Exit Exit { get; }
         public int Height { get; }
         public int Width { get; }
 
-        public GameField() : this(32, 24) { }
+        public GameField(int lvl) : this(32, 24, lvl) { }
 
-        public GameField(int width, int height)
+        public GameField(int width, int height, int lvl)
         {
             Width = width;
             Height = height;
+            Lvl = lvl;
             Tiles = new TerrainTile[width, height];
             // TODO: Deserialize field
             for (int x = 0; x < width; x++)
@@ -40,6 +42,7 @@ namespace AvaloniaRoguelike.Model
                             new TerrainTile(new Point(x * CellSize, y * CellSize), GetTypeForCoords(x, y)));
                 }
             }
+
             GameObjects.Add(
                 Player = new Player(this, new CellLocation(GetCoords()), Facing.East));
             GameObjects.Add(
@@ -47,7 +50,7 @@ namespace AvaloniaRoguelike.Model
 
             for (var c = 0; c < 5; c++)
             {
-                GameObjects.Add(new Mummy(this, new CellLocation(GetCoords()), (Facing)Random.Next(4)));
+                GameObjects.Add(GetRandomEnemy());
             }
         }
 
@@ -68,6 +71,15 @@ namespace AvaloniaRoguelike.Model
                 y = Random.Next(0, Height);
             }
             return (x, y);
+        }
+
+        private Enemy GetRandomEnemy()
+        {
+            if (Random.Next(0, 2) == 1)
+            {
+                return new Mummy(this, new CellLocation(GetCoords()), (Facing)Random.Next(4), Lvl);
+            }
+            return new Scarab(this, new CellLocation(GetCoords()), (Facing)Random.Next(4), Lvl);
         }
     }
 }
