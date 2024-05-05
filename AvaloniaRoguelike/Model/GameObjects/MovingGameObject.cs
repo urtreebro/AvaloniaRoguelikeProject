@@ -68,28 +68,29 @@ public abstract class MovingGameObject : GameObject
     public bool SetTarget(Facing? facing)
         => SetTarget(facing.HasValue ? GetTileAtDirection(facing.Value) : CellLocation);
 
-    private int GetSpeed()
+    private double GetSpeed()
     {
-        //double speed = GameField.CellSize *
-        //            (_field.Tiles[CellLocation.X, CellLocation.Y].Speed +
-        //             _field.Tiles[TargetCellLocation.X, TargetCellLocation.Y].Speed) / 2
-        //            * SpeedFactor;
-        //return speed;
-        return 1;
+        double speed = GameField.CellSize *
+                    (_field[CellLocation.X, CellLocation.Y].Speed +
+                     _field[TargetCellLocation.X, TargetCellLocation.Y].Speed) / 2
+                    * SpeedFactor;
+        return speed;
     }
 
     public void MoveToTarget()
     {
         if (TargetCellLocation == CellLocation)
+        {
             return;
+        }
 
         var path = _pathFindingService.FindPath(_field, CellLocation, TargetCellLocation);
         if (path == null)
         {
-            // TODO: evma, log.Debug?
+            // TODO: MakarovEA, log.Debug?
             return;
         }
-        var nextPathCell = path.First().Position;
+        var nextPathCell = path.Skip(1).First().Position;
         var direction = GetDirection(CellLocation, nextPathCell);
         var speed = GetSpeed();
 
@@ -99,7 +100,7 @@ public abstract class MovingGameObject : GameObject
     private CellLocation GetNewCellLocation(
         Facing direction,
         CellLocation nextPathCell,
-        int speed)
+        double speed)
     {
         var movingRules = new Dictionary<Facing, Func<bool>>
         {
@@ -158,8 +159,8 @@ public abstract class MovingGameObject : GameObject
     {
         return facing switch
         {
-            // TODO: evma, не создавать новую клетку, а получать нужную клетку карты по координатам
-            Facing.North => CellLocation.WithY(CellLocation.Y - 1),
+            // TODO: MakarovEA, не создавать новую клетку, а получать нужную клетку карты по координатам
+            Facing.North => _field[CellLocation.X, CellLocation.Y - 1].CellLocation, //CellLocation.WithY(CellLocation.Y - 1),
             Facing.South => CellLocation.WithY(CellLocation.Y + 1),
             Facing.West => CellLocation.WithX(CellLocation.X - 1),
             Facing.East => CellLocation.WithX(CellLocation.X + 1),

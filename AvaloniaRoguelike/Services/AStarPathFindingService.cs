@@ -98,7 +98,7 @@ public sealed class AStarPathFindingService : IPathFindingService
 
         return neighbourPathNodes
             .Where(e => IsInMapBounds(e.Position, gameField))
-            .Where(e => gameField[e.Position].IsPassable) // TODO: evma, isPassable?
+            .Where(e => gameField[e.Position].IsPassable)
             .ToList();
     }
 

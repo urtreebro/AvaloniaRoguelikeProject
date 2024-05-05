@@ -5,7 +5,7 @@ namespace AvaloniaRoguelike.Model;
 
 public class TerrainTile : GameObject
 {
-    // TODO: evma, TerrainTileType - много соответствий. Класс?
+    // TODO: MakarovEA, TerrainTileType - много соответствий. Класс?
     private static readonly Dictionary<TerrainTileType, double> Speeds = new()
     {
         {TerrainTileType.Plain, 1},

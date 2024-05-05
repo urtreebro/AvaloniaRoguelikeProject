@@ -2,7 +2,7 @@
 
 namespace AvaloniaRoguelike.Model;
 
-// TODO: evma, rename to MapCell?
+// TODO: MakarovEA, rename to MapCell?
 public struct CellLocation
 {
     public CellLocation(int x, int y)

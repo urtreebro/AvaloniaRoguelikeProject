@@ -19,6 +19,11 @@ public class GameField : ViewModelBase
 
     public GameField() : this(Default_Width, Default_Height) { }
 
+    public GameField(IMapGeneratingService mapGeneratingService)
+    {
+        _mapGeneratingService = mapGeneratingService;
+    }
+
     public GameField(int width, int height)
     {
         Width = width;
