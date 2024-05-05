@@ -1,6 +1,5 @@
 ﻿using AvaloniaRoguelike.Model;
 using ReactiveUI;
-using System.Xml.Linq;
 
 namespace AvaloniaRoguelike.ViewModels
 {
@@ -8,11 +7,12 @@ namespace AvaloniaRoguelike.ViewModels
     {
         private Game _game;
 
-        public MainViewModel(Game game)
+        public MainViewModel()
         {
-            _game = game;
+            var field = new GameField(0);
+            _game = new Game(field);
+            _game.Start();
         }
-
 
         public Game Game
         {

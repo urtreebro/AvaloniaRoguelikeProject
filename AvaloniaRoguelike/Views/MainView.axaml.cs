@@ -9,7 +9,7 @@ namespace AvaloniaRoguelike.Views{
     {
         public MainView()
         {
-            AvaloniaXamlLoader.Load(this);
+            InitializeComponent();
         }
     }
 }

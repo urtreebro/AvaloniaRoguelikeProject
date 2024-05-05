@@ -19,11 +19,7 @@ namespace AvaloniaRoguelike
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var field = new GameField(0);
-                var game = new Game(field);
-                game.Start();
-
-                desktop.MainWindow = new MainWindow(game);
+                desktop.MainWindow = new MainWindow();
             }
         }
     }

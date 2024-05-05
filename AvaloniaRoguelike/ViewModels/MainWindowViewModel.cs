@@ -1,36 +1,45 @@
 ﻿using AvaloniaRoguelike.Model;
 using ReactiveUI;
 
+using System;
+using System.Collections.Generic;
+using System.Reactive;
+
 namespace AvaloniaRoguelike.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private Game _game;
         private ViewModelBase content;
+        private ViewModelBase[] gameViewModels;
 
-        public MainWindowViewModel(
-            Game game)
+        public MainWindowViewModel()
         {
-            Content = new MainViewModel(game);
-            Game = game;
-            //ButtonClickCommand = ReactiveCommand.Create(ButtonClick);
+            gameViewModels = new ViewModelBase[2];
+            gameViewModels[0] = new MainMenuViewModel();
+            gameViewModels[1] = new MainViewModel();
+            Content = gameViewModels[0];
+            ButtonPlayCommand = ReactiveCommand.Create(ButtonPlayClick);
+            ButtonQuitCommand = ReactiveCommand.Create(ButtonQuitClick);
         }
 
-        public Game Game
-        {
-            get => _game;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _game, value);
-            }
-        }
         public ViewModelBase Content
         {
             get => content;
             private set => this.RaiseAndSetIfChanged(ref content, value);
         }
 
-        //public void ButtonClick() => GameField.TempValue = "RogueLike";
-        //public ReactiveCommand<Unit, Unit> ButtonClickCommand { get; }
+        public void ButtonPlayClick()
+        {
+            // 1 - сама игра
+            Content = gameViewModels[1];
+        }
+
+        public void ButtonQuitClick()
+        {
+            Environment.Exit(0);
+        }
+
+        public ReactiveCommand<Unit, Unit> ButtonPlayCommand { get; }
+        public ReactiveCommand<Unit, Unit> ButtonQuitCommand { get; }
     }
 }

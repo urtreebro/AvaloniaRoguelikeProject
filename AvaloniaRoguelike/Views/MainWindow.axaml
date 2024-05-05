@@ -1,13 +1,18 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:local="clr-namespace:AvaloniaRoguelike;assembly=AvaloniaRoguelike"
         xmlns:model="clr-namespace:AvaloniaRoguelike.Model;assembly=AvaloniaRoguelike"
-        xmlns:tran="clr-namespace:Avalonia.Animation;assembly=Avalonia.Animation"
+        xmlns:vm="clr-namespace:AvaloniaRoguelike.ViewModels;assembly=AvaloniaRoguelike"
+        xmlns:tran="clr-namespace:Avalonia.Animation;assembly=Avalonia.Animation"        
         xmlns:infrastructure="clr-namespace:AvaloniaRoguelike.Infrastructure;assembly=AvaloniaRoguelike"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AvaloniaRoguelike"
+        Width="1024"
+        Height="768"
         x:Class="AvaloniaRoguelike.Views.MainWindow"
-        Title="AvaloniaRoguelike" Width="1024" Height="768" 
-		Design.DataContext="{x:Static model:GameField.DesignInstance}"
-		Content="{Binding content}">
+        x:DataType="vm:MainWindowViewModel"
+				Design.DataContext="{x:Static model:GameField.DesignInstance}"
+				Content="{Binding Content}">
+
 	<Window.Styles >
 		<Style Selector="ItemsControl > ContentPresenter">
 			<Setter Property="Canvas.Left" Value="{Binding Location.X}"/>
@@ -25,5 +30,5 @@
 			<Setter Property="Opacity" Value="0.5"/>
 		</Style>
 	</Window.Styles>
-	
+
 </Window>
