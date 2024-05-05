@@ -7,6 +7,5 @@ public class MainViewModel : ViewModelBase
     public MainViewModel(GameField field)
     {
         ViewModelBase content = new GameViewModel(field.GameObjects);
-    } 
-    
+    }
 }}

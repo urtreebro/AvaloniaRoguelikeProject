@@ -36,5 +36,4 @@ public sealed class PathNode
     /// Ожидаемое полное расстояние до цели (F).
     /// </summary>
     public int EstimateFullPathLength => PathLengthFromStart + HeuristicEstimatePathLength;
-
 }

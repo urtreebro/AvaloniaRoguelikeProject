@@ -1,9 +1,8 @@
 ﻿using Avalonia;
 
-namespace AvaloniaRoguelike.Model
+namespace AvaloniaRoguelike.Model;
+
+public class Exit : TerrainTile
 {
-    public class Exit : GameObject
-    {
-        public Exit(Point location) : base(location) { }
-    }
+    public Exit(Point location) : base(location) { }
 }

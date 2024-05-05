@@ -4,82 +4,79 @@ using System.Linq;
 using ReactiveUI;
 
 using Avalonia.Input;
-using System.Threading.Tasks;
 
-namespace AvaloniaRoguelike.Model
+namespace AvaloniaRoguelike.Model;
+
+public class Game : GameBase
 {
-    public class Game : GameBase
+    private GameField _field;
+    private readonly Dictionary<Key, Facing> _keyFacingPairs = new()
     {
-        private GameField _field;
-        private readonly Dictionary<Key, Facing> _keyFacingPairs = new Dictionary<Key, Facing>
-        {
-            { Key.W, Facing.North},
-            { Key.S, Facing.South},
-            { Key.A, Facing.West},
-            { Key.D, Facing.East}
-        };
+        { Key.W, Facing.North},
+        { Key.S, Facing.South},
+        { Key.A, Facing.West},
+        { Key.D, Facing.East}
+    };
 
-        private static Random rnd = new Random();
-        public Game(GameField field)
+    private static readonly Random _rnd = new();
+    public Game(GameField field)
+    {
+        _field = field;
+    }
+
+    public GameField Field
+    {
+        get { return _field; }
+        set
         {
-            _field = field;
+            this.RaiseAndSetIfChanged(ref _field, value);
         }
+    }
 
-        public GameField Field
-        {
-            get { return _field; }
-            set
+    protected override void Tick()
+    {
+        SetPlayerMovingTarget();
+
+        foreach (var enemy in _field.GameObjects.OfType<Enemy>())
+            if (!enemy.IsMoving)
             {
-                this.RaiseAndSetIfChanged(ref _field, value);
-            }
-        }
-
-        protected override void Tick()
-        {
-            SetPlayerMovingTarget();
-
-            foreach (var enemy in _field.GameObjects.OfType<Enemy>())
-                if (!enemy.IsMoving)
+                if (!enemy.SetTarget(enemy.Facing))
                 {
-                    if (!enemy.SetTarget(enemy.Facing))
-                    {
-                        if (!enemy.SetTarget((Facing)rnd.Next(4)))
-                            enemy.SetTarget(null);
-                    }
+                    if (!enemy.SetTarget((Facing)_rnd.Next(4)))
+                        enemy.SetTarget(null);
                 }
-
-            MoveGameObjects();
-
-            if (Field.Player.CellLocation.ToPoint() == Field.Exit.Location)
-            {
-                Field = new();
             }
-        }
 
-        private void MoveGameObjects()
+        MoveGameObjects();
+
+        if (Field.Player.CellLocation.ToPoint() == Field.Exit.Location)
         {
-            foreach (var obj in Field.GameObjects.OfType<MovingGameObject>())
-            {
-                obj.MoveToTarget();
-            }
+            Field = new();
         }
+    }
 
-        private void SetPlayerMovingTarget()
+    private void MoveGameObjects()
+    {
+        foreach (var obj in Field.GameObjects.OfType<MovingGameObject>())
         {
-            if (Field.Player.IsMoving)
-            {
-                return;
-            }
-            if (_keyFacingPairs.TryGetValue(Keyboard.LastKeyPressed(), out var facing))
-            {
-                Field.Player.SetTarget(facing);
-            }
+            obj.MoveToTarget();
         }
+    }
 
-        private bool IsGameRunning()
+    private void SetPlayerMovingTarget()
+    {
+        if (Field.Player.IsMoving)
         {
-            if (Field.Player.IsAlive()) return true;
-            return false;
+            return;
         }
+        if (_keyFacingPairs.TryGetValue(Keyboard.LastKeyPressed(), out var facing))
+        {
+            Field.Player.SetTarget(facing);
+        }
+    }
+
+    private bool IsGameRunning()
+    {
+        return Field.Player.IsAlive();
     }
 }

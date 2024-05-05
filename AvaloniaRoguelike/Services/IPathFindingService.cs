@@ -6,5 +6,5 @@ namespace AvaloniaRoguelike.Services;
 
 public interface IPathFindingService
 {
-    IList<PathNode> FindPath(Map map, CellLocation from, CellLocation to);
+    IList<PathNode> FindPath(GameField gameField, CellLocation from, CellLocation to);
 }

@@ -9,7 +9,7 @@ namespace AvaloniaRoguelike.Services;
 public sealed class AStarPathFindingService : IPathFindingService
 {
     public IList<PathNode> FindPath(
-        Map map,
+        GameField gameField,
         CellLocation from,
         CellLocation to)
     {
@@ -39,7 +39,7 @@ public sealed class AStarPathFindingService : IPathFindingService
             openSet.Remove(currentNode);
             closedSet.Add(currentNode);
 
-            var neighbourNodes = GetNeighbours(currentNode, finishNode, map);
+            var neighbourNodes = GetNeighbours(currentNode, finishNode, gameField);
 
             foreach (var neighbour in neighbourNodes)
             {
@@ -80,7 +80,7 @@ public sealed class AStarPathFindingService : IPathFindingService
     private static List<PathNode> GetNeighbours(
         PathNode from,
         PathNode to,
-        Map map)
+        GameField gameField)
     {
         var neighbourPathNodes = new List<PathNode>(4)
         {
@@ -97,8 +97,8 @@ public sealed class AStarPathFindingService : IPathFindingService
         }
 
         return neighbourPathNodes
-            .Where(e => IsInMapBounds(e.Position, map))
-            .Where(e => map[e.Position] != "#") // TODO: evma, isPassable?
+            .Where(e => IsInMapBounds(e.Position, gameField))
+            .Where(e => gameField[e.Position].IsPassable) // TODO: evma, isPassable?
             .ToList();
     }
 
@@ -121,10 +121,10 @@ public sealed class AStarPathFindingService : IPathFindingService
         return result;
     }
 
-    private static bool IsInMapBounds(CellLocation cell, Map map)
+    private static bool IsInMapBounds(CellLocation cell, GameField gameField)
     {
-        if (cell.X < 0 || cell.X >= map.Width ||
-            cell.Y < 0 || cell.Y >= map.Height)
+        if (cell.X < 0 || cell.X >= gameField.Width ||
+            cell.Y < 0 || cell.Y >= gameField.Height)
             return false;
         return true;
     }

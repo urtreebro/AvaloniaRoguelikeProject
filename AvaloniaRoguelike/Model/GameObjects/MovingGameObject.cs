@@ -20,14 +20,13 @@ public abstract class MovingGameObject : GameObject
     public MovingGameObject(
         GameField field,
         CellLocation location,
-        Facing facing,
-        IPathFindingService pathFindingService)
+        Facing facing)
         : base(location.ToPoint())
     {
         _field = field;
         Facing = facing;
         CellLocation = TargetCellLocation = location;
-        _pathFindingService = pathFindingService;
+        _pathFindingService = new AStarPathFindingService();
     }
 
     public override int Layer => 1;
@@ -41,10 +40,10 @@ public abstract class MovingGameObject : GameObject
         }
     }
 
-    public CellLocation CellLocation
+    public override CellLocation CellLocation
     {
         get { return _cellLocation; }
-        private set
+        protected set
         {
             this.RaiseAndSetIfChanged(ref _cellLocation, value);
             this.RaiseAndSetIfChanged(ref _cellLocation, value, nameof(IsMoving));
@@ -84,7 +83,12 @@ public abstract class MovingGameObject : GameObject
         if (TargetCellLocation == CellLocation)
             return;
 
-        var path = _pathFindingService.FindPath(_field.Map, CellLocation, TargetCellLocation);
+        var path = _pathFindingService.FindPath(_field, CellLocation, TargetCellLocation);
+        if (path == null)
+        {
+            // TODO: evma, log.Debug?
+            return;
+        }
         var nextPathCell = path.First().Position;
         var direction = GetDirection(CellLocation, nextPathCell);
         var speed = GetSpeed();
@@ -142,7 +146,7 @@ public abstract class MovingGameObject : GameObject
 
     private bool IsTilePassable(CellLocation loc)
     {
-        return _field.Tiles[loc.X, loc.Y].IsPassable;
+        return _field[loc.X, loc.Y].IsPassable;
     }
 
     private bool IsLocationOutOfBounds(CellLocation loc)
