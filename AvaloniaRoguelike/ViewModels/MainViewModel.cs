@@ -1,11 +1,25 @@
 ﻿using AvaloniaRoguelike.Model;
+using ReactiveUI;
 
-namespace AvaloniaRoguelike.ViewModels
-{
+namespace AvaloniaRoguelike.ViewModels;
+
 public class MainViewModel : ViewModelBase
 {
-    public MainViewModel(GameField field)
+    private Game _game;
+
+    public MainViewModel()
     {
-        ViewModelBase content = new GameViewModel(field.GameObjects);
+        var field = new GameField(0);
+        _game = new Game(field);
+        _game.Start();
     }
-}}
+
+    public Game Game
+    {
+        get => _game;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _game, value);
+        }
+    }
+}

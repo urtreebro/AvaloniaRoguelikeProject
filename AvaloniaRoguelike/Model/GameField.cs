@@ -17,17 +17,18 @@ public class GameField : ViewModelBase
     public const int Default_Width = 32;
     public const int Default_Height = 24;
 
-    public GameField() : this(Default_Width, Default_Height) { }
+    public GameField(int lvl) : this(Default_Width, Default_Height, lvl) { }
 
     public GameField(IMapGeneratingService mapGeneratingService)
     {
         _mapGeneratingService = mapGeneratingService;
     }
 
-    public GameField(int width, int height)
+    public GameField(int width, int height, int lvl)
     {
         Width = width;
         Height = height;
+        Lvl = lvl;
         GameObjects = [];
         _map = new TerrainTile[Width, Height];
         _mapGeneratingService = new MapGeneratingService();
@@ -46,7 +47,7 @@ public class GameField : ViewModelBase
 
         for (var c = 0; c < 5; c++)
         {
-            GameObjects.Add(new Mummy(this, new CellLocation(GetCoords()), GetRandomFacing()));
+            GameObjects.Add(GetRandomEnemy());
         }
     }
 
@@ -81,5 +82,14 @@ public class GameField : ViewModelBase
     private Facing GetRandomFacing()
     {
         return (Facing)Random.Next(4);
+    }
+
+    private Enemy GetRandomEnemy()
+    {
+        if (Random.Next(0, 2) == 1)
+        {
+            return new Mummy(this, new CellLocation(GetCoords()), GetRandomFacing(), Lvl);
+        }
+        return new Scarab(this, new CellLocation(GetCoords()), GetRandomFacing(), Lvl);
     }
 }

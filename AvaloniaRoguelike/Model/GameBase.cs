@@ -1,6 +1,8 @@
 ﻿using Avalonia.Threading;
 using ReactiveUI;
 using System;
+using ReactiveUI;
+using AvaloniaRoguelike.ViewModels;
 
 namespace AvaloniaRoguelike.Model;
 
@@ -23,6 +25,7 @@ public abstract class GameBase : ReactiveObject
 
     public const int TicksPerSecond = 60;
     public long CurrentTick { get; private set; }
+    public int Lvl { get; protected set; }
 
     public void Start() => _timer.IsEnabled = true;
     public void Stop() => _timer.IsEnabled = false;

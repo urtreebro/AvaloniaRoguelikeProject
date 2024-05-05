@@ -5,11 +5,11 @@ using Avalonia.Markup.Xaml;
 
 namespace AvaloniaRoguelike.Views{
 
-public partial class MainView : UserControl
-{
-    public MainView()
+    public partial class MainView : UserControl
     {
-        AvaloniaXamlLoader.Load(this);
+        public MainView()
+        {
+            InitializeComponent();
+        }
     }
-}
 }

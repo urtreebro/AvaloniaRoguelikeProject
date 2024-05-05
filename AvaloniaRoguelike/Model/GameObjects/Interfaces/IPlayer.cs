@@ -8,8 +8,6 @@ namespace AvaloniaRoguelike.Model
 {
     public interface IPlayer : IAttacking
     {
-        //Item[] inventory;
-
         //void Kill;
     }
 }

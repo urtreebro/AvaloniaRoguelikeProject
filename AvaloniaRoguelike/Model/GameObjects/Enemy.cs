@@ -13,4 +13,7 @@ public abstract class Enemy : AliveGameObject, IEnemy
     { }
 
     protected override double SpeedFactor => _speed * base.SpeedFactor;
+    protected abstract int GetHpByLvl();
+    protected abstract int GetAttackByLvl();
+    protected abstract double GetSpeedByLvl();
 }

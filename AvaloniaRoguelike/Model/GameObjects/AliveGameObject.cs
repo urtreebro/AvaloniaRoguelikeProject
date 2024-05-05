@@ -26,10 +26,14 @@ public abstract class AliveGameObject : MovingGameObject, IAlive
         protected set;
     }
     public double _speed;
+    protected double Speed
+    {
+        get => _speed;
+        set => _speed = value;
+    }
 
     public bool IsAlive()
     {
-        if (HP > 0) return true;
-        return false;
+        return HP > 0;
     }
 }

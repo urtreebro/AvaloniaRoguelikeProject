@@ -15,6 +15,8 @@ public class ZIndexConverter : IValueConverter
     {
         if (value is Player)
             return 2;
+        if (value is Enemy)
+            return 1;
         else 
             return 0;
     }
