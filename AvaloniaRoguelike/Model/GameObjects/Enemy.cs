@@ -6,13 +6,18 @@ public abstract class Enemy : AliveGameObject, IEnemy
         GameField field,
         CellLocation location,
         Facing facing,
-        int hp,
-        int attack,
-        double speed)
-        : base(field, location, facing, hp, attack, speed) 
-    { }
+        int enemylvl)
+        : base(field, location, facing)
+    {
+        EnemyLvl = enemylvl;
+        HP = GetHpByLvl();
+        Attack = GetAttackByLvl();
+        Speed = GetSpeedByLvl();
+    }
 
-    protected override double SpeedFactor => _speed * base.SpeedFactor;
+    public int EnemyLvl { get; protected set; }
+
+    protected override double SpeedFactor => Speed * base.SpeedFactor;
     protected abstract int GetHpByLvl();
     protected abstract int GetAttackByLvl();
     protected abstract double GetSpeedByLvl();

@@ -5,8 +5,9 @@ public class Mummy : Enemy
     public Mummy(
         GameField field,
         CellLocation location,
-        Facing facing)
-        : base(field, location, facing, 20, 3, 0.5)
+        Facing facing,
+        int enemylvl)
+        : base(field, location, facing, enemylvl)
     { }
 
     protected override int GetHpByLvl()

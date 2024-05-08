@@ -63,18 +63,17 @@ public abstract class MovingGameObject : GameObject
 
     public bool IsMoving => TargetCellLocation != CellLocation;
 
-    protected virtual double SpeedFactor => (double)1 / 12; // TODO: Read from config
+    protected virtual double SpeedFactor => (double)1 / 15; // TODO: Read from config
 
     public bool SetTarget(Facing? facing)
         => SetTarget(facing.HasValue ? GetTileAtDirection(facing.Value) : CellLocation);
 
     private double GetSpeed()
     {
-        double speed = GameField.CellSize *
+        return GameField.CellSize *
                     (_field[CellLocation.X, CellLocation.Y].Speed +
                      _field[TargetCellLocation.X, TargetCellLocation.Y].Speed) / 2
                     * SpeedFactor;
-        return speed;
     }
 
     public void MoveToTarget()
@@ -94,25 +93,42 @@ public abstract class MovingGameObject : GameObject
         var direction = GetDirection(CellLocation, nextPathCell);
         var speed = GetSpeed();
 
-        CellLocation = GetNewCellLocation(direction, nextPathCell, speed);
-    }
-
-    private CellLocation GetNewCellLocation(
-        Facing direction,
-        CellLocation nextPathCell,
-        double speed)
-    {
-        var movingRules = new Dictionary<Facing, Func<bool>>
+        var movingRules = new Dictionary<Facing, Action>
         {
-            {Facing.North, () => CellLocation.Y - speed <= nextPathCell.Y },
-            {Facing.South, () => CellLocation.Y + speed >= nextPathCell.Y },
-            {Facing.West, () => CellLocation.X - speed <= nextPathCell.X },
-            {Facing.East, () => CellLocation.X + speed >= nextPathCell.X }
+            {
+                Facing.North, () =>
+                {
+                    Location = Location.WithY(Location.Y - speed);
+                    if (Location.Y / GameField.CellSize <= TargetCellLocation.Y)
+                        CellLocation = TargetCellLocation;
+                } 
+            },
+            {
+                Facing.South, () =>
+                {
+                    Location = Location.WithY(Location.Y + speed);
+                    if (Location.Y / GameField.CellSize >= TargetCellLocation.Y)
+                        CellLocation = TargetCellLocation;
+                }
+            },
+            {
+                Facing.West, () => 
+                {
+                    Location = Location.WithX(Location.X - speed);
+                    if (Location.X / GameField.CellSize <= TargetCellLocation.X)
+                        CellLocation = TargetCellLocation;
+                }
+            },
+            {
+                Facing.East, () =>
+                {
+                    Location = Location.WithX(Location.X + speed);
+                    if (Location.X / GameField.CellSize >= TargetCellLocation.X)
+                        CellLocation = TargetCellLocation;
+                }
+            }
         };
-
-        if (movingRules[direction]())
-            return nextPathCell;
-        return CellLocation;
+        movingRules[direction]();
     }
 
 
@@ -159,11 +175,11 @@ public abstract class MovingGameObject : GameObject
     {
         return facing switch
         {
-            // TODO: MakarovEA, не создавать новую клетку, а получать нужную клетку карты по координатам
+            // TODO: MakarovEA, не создавать новую клетку, а получать нужную клетку карты по координатам, сравнить
             Facing.North => _field[CellLocation.X, CellLocation.Y - 1].CellLocation, //CellLocation.WithY(CellLocation.Y - 1),
-            Facing.South => CellLocation.WithY(CellLocation.Y + 1),
-            Facing.West => CellLocation.WithX(CellLocation.X - 1),
-            Facing.East => CellLocation.WithX(CellLocation.X + 1),
+            Facing.South => _field[CellLocation.X, CellLocation.Y + 1].CellLocation,
+            Facing.West => _field[CellLocation.X - 1, CellLocation.Y].CellLocation,
+            Facing.East => _field[CellLocation.X + 1, CellLocation.Y].CellLocation,
             _ => throw new NotImplementedException(),
         };
     }
@@ -178,11 +194,5 @@ public abstract class MovingGameObject : GameObject
         if (target.Y < current.Y)
             return Facing.North;
         return Facing.South;
-    }
-
-    private void SetLocation(CellLocation loc)
-    {
-        CellLocation = loc;
-        Location = loc.ToPoint();
     }
 }

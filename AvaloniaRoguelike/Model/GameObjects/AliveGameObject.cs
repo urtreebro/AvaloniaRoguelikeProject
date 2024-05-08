@@ -5,31 +5,27 @@ public abstract class AliveGameObject : MovingGameObject, IAlive
     protected AliveGameObject(
         GameField field,
         CellLocation location,
-        Facing facing,
-        int hp,
-        int attack,
-        double speed) 
+        Facing facing) 
         : base(field, location, facing) 
-    { 
-        HP = hp;
-        Attack = attack;
-        _speed = speed;
+    {
     }
+
     public int HP
     {
         get;
         protected set;
     }
+
     public int Attack
     {
         get;
         protected set;
     }
-    public double _speed;
-    protected double Speed
+
+    public double Speed
     {
-        get => _speed;
-        set => _speed = value;
+        get;
+        protected set;
     }
 
     public bool IsAlive()

@@ -8,7 +8,7 @@ namespace AvaloniaRoguelike.Model;
 
 public class GameField : ViewModelBase
 {
-    public static GameField DesignInstance { get; } = new GameField();
+    public static GameField DesignInstance { get; } = new GameField(0);
 
     private readonly TerrainTile[,] _map;
     private readonly IMapGeneratingService _mapGeneratingService;
@@ -18,11 +18,6 @@ public class GameField : ViewModelBase
     public const int Default_Height = 24;
 
     public GameField(int lvl) : this(Default_Width, Default_Height, lvl) { }
-
-    public GameField(IMapGeneratingService mapGeneratingService)
-    {
-        _mapGeneratingService = mapGeneratingService;
-    }
 
     public GameField(int width, int height, int lvl)
     {
@@ -59,12 +54,21 @@ public class GameField : ViewModelBase
 
     public TerrainTile this[CellLocation location] => _map[location.X, location.Y];
 
+    /// <summary>
+    /// 
+    /// </summary>
     public ObservableCollection<GameObject> GameObjects { get; }
 
+    public int Lvl { get; }
+
     public Random Random { get; } = new();
+
     public Player Player { get; }
+
     public Exit Exit { get; }
+
     public int Height { get; }
+
     public int Width { get; }
 
     private (int, int) GetCoords()

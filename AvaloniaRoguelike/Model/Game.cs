@@ -36,20 +36,20 @@ public class Game : GameBase
     {
         SetPlayerMovingTarget();
 
-            SetEnemyMovingTarget();
+        SetEnemyMovingTarget();
 
         MoveGameObjects();
 
-            if (Field.Player.CellLocation.ToPoint() == Field.Exit.Location)
-            {
-                Field = new(Lvl);
-            }
-
-            if (Field.Player.IsNewLvl())
-            {
-                LvlUp();
-            }
+        if (Field.Player.CellLocation.ToPoint() == Field.Exit.Location)
+        {
+            Field = new(Lvl);
         }
+
+        if (Field.Player.IsNewLvl())
+        {
+            LvlUp();
+        }
+    }
 
     private void MoveGameObjects()
     {
@@ -71,28 +71,27 @@ public class Game : GameBase
         }
     }
 
-        private void SetEnemyMovingTarget()
-        {
-            foreach (var enemy in _field.GameObjects.OfType<Enemy>())
-                if (!enemy.IsMoving)
+    private void SetEnemyMovingTarget()
+    {
+        foreach (var enemy in _field.GameObjects.OfType<Enemy>())
+            if (!enemy.IsMoving)
+            {
+                if (!enemy.SetTarget(enemy.Facing))
                 {
-                    if (!enemy.SetTarget(enemy.Facing))
-                    {
-                        if (!enemy.SetTarget((Facing)rnd.Next(4)))
-                            enemy.SetTarget(null);
-                    }
+                    if (!enemy.SetTarget((Facing)_rnd.Next(4)))
+                        enemy.SetTarget(null);
                 }
-        }
+            }
+    }
 
-        private bool IsGameRunning()
-        {
-            return Field.Player.IsAlive();
-        }
+    private bool IsGameRunning()
+    {
+        return Field.Player.IsAlive();
+    }
 
-        private void LvlUp()
-        {
-            Lvl++;
-            Field.Player.LvlUp();
-        }
+    private void LvlUp()
+    {
+        Lvl++;
+        Field.Player.LvlUp();
     }
 }

@@ -8,7 +8,7 @@ namespace AvaloniaRoguelike.Model;
 
 public abstract class GameBase : ReactiveObject
 {
-    private readonly DispatcherTimer _timer = new() { Interval = new TimeSpan(0, 0, 0, 0, 1000 / TicksPerSecond) };
+    private readonly DispatcherTimer _timer = new() { Interval = new TimeSpan(0, 0, 0, 0, (int)DeltaTime) };
 
     protected GameBase()
     {
@@ -24,6 +24,7 @@ public abstract class GameBase : ReactiveObject
     protected abstract void Tick();
 
     public const int TicksPerSecond = 60;
+    public static double DeltaTime = 1000 / TicksPerSecond;
     public long CurrentTick { get; private set; }
     public int Lvl { get; protected set; }
 
