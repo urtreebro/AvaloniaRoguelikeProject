@@ -8,6 +8,8 @@ namespace AvaloniaRoguelike.ViewModels
         {
 
         } 
+
+        public string Name { get; set; }
     
     }
 }

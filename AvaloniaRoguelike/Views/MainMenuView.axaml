@@ -10,39 +10,52 @@
              mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="768"
              x:Class="AvaloniaRoguelike.Views.MainMenuView"
              x:DataType="vm:MainMenuViewModel">
-  <StackPanel Background="BlanchedAlmond"
+  <StackPanel Background="HotPink"
               Orientation="Vertical">
     <!--Top Panel-->
     <Grid Height="80" Background="Gray">
       <Label Margin="10" FontWeight="Black" FontSize="40">AvaloniaRoguelike</Label>
     </Grid>
+		
+	  <Grid RowDefinitions="auto,*" ColumnDefinitions="200, 824">
+		  <Border Grid.Row="0" Grid.Column="0" Width="200" HorizontalAlignment="Left" Background="LightGray" CornerRadius="0, 0, 10, 0">
+			  <Grid RowDefinitions="auto,auto,auto,auto,auto" >
+				  <!--Play Button-->
+				  <Button Grid.Row="0"
+						  Grid.Column="0"
+						  Margin="5"
+						  FontSize="25"
+						  HorizontalAlignment="Center"
+						  Content="Play"
+						  Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ButtonPlayCommand}">
+				  </Button>
 
+				  <!--Options Button-->
+				  <Button Grid.Row="1" Grid.Column="0" Margin="5" FontSize="25" HorizontalAlignment="Center">Options</Button>
+
+				  <!--Credits Button-->
+				  <Button Grid.Row="2" Grid.Column="0" Margin="5" FontSize="25" HorizontalAlignment="Center">Credits</Button>
+
+				  <!--Quit Button-->
+				  <Button Grid.Row="3" Grid.Column="0" Margin="5" FontSize="25" HorizontalAlignment="Center"
+						  Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ButtonQuitCommand}">Quit</Button>
+
+				  <!--Game Version-->
+				  <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">v0.0</TextBlock>
+			  </Grid>
+		  </Border>
+		  <TextBox Grid.Row="0" 
+				   Grid.Column="1" 
+				   Height="40" 
+				   Width="200" 
+				   Text="{Binding Name}" 
+				   VerticalAlignment="Top" 
+				   HorizontalAlignment="Center" 
+				   Watermark="Enter Name" 
+				   Margin="20">
+		  </TextBox>
+	  </Grid>
     <!--Main Menu-->
-    <Border Width="200" HorizontalAlignment="Left" Background="LightGray" CornerRadius="0, 0, 10, 0">
-      <Grid RowDefinitions="auto,auto,auto,auto,auto" >
-        <!--Play Button-->
-        <Button Grid.Row="0"
-                Grid.Column="0"
-                Margin="5"
-                FontSize="25"
-                HorizontalAlignment="Center"
-                Content="Play"
-                Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ButtonPlayCommand}">
-        </Button>
-
-        <!--Options Button-->
-        <Button Grid.Row="1" Grid.Column="0" Margin="5" FontSize="25" HorizontalAlignment="Center">Options</Button>
-
-        <!--Credits Button-->
-        <Button Grid.Row="2" Grid.Column="0" Margin="5" FontSize="25" HorizontalAlignment="Center">Credits</Button>
-
-        <!--Quit Button-->
-        <Button Grid.Row="3" Grid.Column="0" Margin="5" FontSize="25" HorizontalAlignment="Center"
-                Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ButtonQuitCommand}">Quit</Button>
-
-        <!--Game Version-->
-        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">v0.0</TextBlock>
-      </Grid>
-    </Border>
+    
   </StackPanel>
 </UserControl>
