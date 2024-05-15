@@ -31,7 +31,14 @@
 				  </Button>
 
 				  <!--Options Button-->
-				  <Button Grid.Row="1" Grid.Column="0" Margin="5" FontSize="25" HorizontalAlignment="Center">Options</Button>
+				  <Button Grid.Row="1" 
+				  		  Grid.Column="0" 
+						  Margin="5" 
+						  FontSize="25" 
+						  HorizontalAlignment="Center"
+						  Content="Options"
+						  Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ButtonOptionsCommand}">
+				  </Button>
 
 				  <!--Credits Button-->
 				  <Button Grid.Row="2" Grid.Column="0" Margin="5" FontSize="25" HorizontalAlignment="Center">Credits</Button>
