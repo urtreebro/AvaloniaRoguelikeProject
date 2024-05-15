@@ -75,7 +75,7 @@ public abstract class MovingGameObject : GameObject
                      _field[TargetCellLocation.X, TargetCellLocation.Y].Speed) / 2
                     * SpeedFactor;
     }
-
+    //TODO: https://faronbracy.github.io/RogueSharp/ need to edit brenches, cause Map needed and, maybe, redo pathfinding using roguesharp library
     public void MoveToTarget()
     {
         if (TargetCellLocation == CellLocation)
