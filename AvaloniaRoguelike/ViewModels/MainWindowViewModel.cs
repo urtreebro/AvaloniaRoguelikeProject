@@ -5,12 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Reactive;
 
-namespace AvaloniaRoguelike.ViewModels
+namespace AvaloniaRoguelike.ViewModels;
+
+public class MainWindowViewModel : ViewModelBase
 {
-    public class MainWindowViewModel : ViewModelBase
-    {
-        private ViewModelBase content;
-        private ViewModelBase[] gameViewModels;
+    private ViewModelBase content;
+    private ViewModelBase[] gameViewModels;
+    
+   
 
         public MainWindowViewModel()
         {
@@ -34,11 +36,11 @@ namespace AvaloniaRoguelike.ViewModels
         {
             // 1 - сама игра
             Content = gameViewModels[1];
+            ((MainViewModel)gameViewModels[1]).StartGame();
         }
 
         public void ButtonOptionsClick()
         {
-            // 1 - сама игра
             Content = gameViewModels[2];
         }
 

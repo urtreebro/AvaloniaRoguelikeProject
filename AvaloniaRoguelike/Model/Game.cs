@@ -4,97 +4,115 @@ using System.Linq;
 using ReactiveUI;
 using Avalonia.Input;
 
-namespace AvaloniaRoguelike.Model
+namespace AvaloniaRoguelike.Model;
+
+public class Game : GameBase
 {
-    public class Game : GameBase
+    private GameField _field;
+    private readonly Dictionary<Key, Facing> _keyFacingPairs = new()
     {
-        private GameField _field;
-        private readonly Dictionary<Key, Facing> _keyFacingPairs = new Dictionary<Key, Facing>
-        {
-            { Key.W, Facing.North},
-            { Key.S, Facing.South},
-            { Key.A, Facing.West},
-            { Key.D, Facing.East}
-        };
+        { Key.W, Facing.North},
+        { Key.S, Facing.South},
+        { Key.A, Facing.West},
+        { Key.D, Facing.East}
+    };
 
-        private static Random rnd = new Random();
+    private static readonly Random _rnd = new();
+    public Game(GameField field)
+    {
+        _field = field;
+    }
 
-        public Game(GameField field)
+    public GameField Field
+    {
+        get { return _field; }
+        set
         {
-            _field = field;
+            this.RaiseAndSetIfChanged(ref _field, value);
+        }
+    }
+
+
+    public Player Player
+    {
+        get { return Field.Player; }
+    }
+
+    protected override void Tick()
+    {
+        SetPlayerMovingTarget();
+
+        //SetEnemyMovingTarget();
+
+        DoGameObjectsLogic();
+
+        MoveGameObjects();
+
+        if (Player.CellLocation.ToPoint() == Field.Exit.Location)
+        {
+            Field = new(Lvl);
         }
 
-        public GameField Field
+        if (Player.IsNewLvl())
         {
-            get { return _field; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _field, value);
-            }
+            LvlUp();
         }
+    }
 
-        protected override void Tick()
+    private void MoveGameObjects()
+    {
+        foreach (var obj in Field.GameObjects.OfType<MovingGameObject>())
         {
-            SetPlayerMovingTarget();
-
-            SetEnemyMovingTarget();
-
-            MoveGameObjects();
-
-            if (Field.Player.CellLocation.ToPoint() == Field.Exit.Location)
-            {
-                Field = new(Lvl);
-            }
-
-            if (Field.Player.IsNewLvl())
-            {
-                LvlUp();
-            }
+            obj.MoveToTarget();
         }
+    }
 
-        private void MoveGameObjects()
+    private void SetPlayerMovingTarget()
+    {
+        if (Field.Player.IsMoving)
         {
-            foreach (var obj in Field.GameObjects.OfType<MovingGameObject>())
-            {
-                obj.MoveToTarget();
-            }
+            return;
         }
-
-        private void SetPlayerMovingTarget()
+        if (_keyFacingPairs.TryGetValue(Keyboard.LastKeyPressed(), out var facing))
         {
-            if (Field.Player.IsMoving)
-            {
-                return;
-            }
-            if (_keyFacingPairs.TryGetValue(Keyboard.LastKeyPressed(), out var facing))
-            {
-                Field.Player.SetTarget(facing);
-            }
+            Field.Player.SetTarget(facing);
         }
+    }
 
-        private void SetEnemyMovingTarget()
+    private void SetEnemyMovingTarget()
+    {
+        foreach (var enemy in Field.GameObjects.OfType<Enemy>())
         {
-            foreach (var enemy in _field.GameObjects.OfType<Enemy>())
-                if (!enemy.IsMoving)
+            if (!enemy.IsMoving)
+            {
+                if (!enemy.SetTarget(enemy.Facing))
                 {
-                    if (!enemy.SetTarget(enemy.Facing))
+                    if (!enemy.SetTarget((Facing)_rnd.Next(4)))
                     {
-                        if (!enemy.SetTarget((Facing)rnd.Next(4)))
-                            enemy.SetTarget(null);
+                        enemy.SetTarget(null);
                     }
                 }
+            }
         }
+    }
 
-        private bool IsGameRunning()
+    private void DoGameObjectsLogic()
+    {
+        var currentObjects = Field.GameObjects.OfType<MovingGameObject>().Except(new MovingGameObject[] { Player }).ToList();
+        foreach (var obj in currentObjects)
         {
-            if (Field.Player.IsAlive()) return true;
-            return false;
+            obj.DoMainLogicEachGameTick();
         }
+    }
 
-        private void LvlUp()
-        {
-            Lvl++;
-            Field.Player.LvlUp();
-        }
+    private bool IsGameRunning()
+    {
+        return Player.IsAlive();
+    }
+
+    private void LvlUp()
+    {
+        Lvl++;
+        Player.LvlUp();
     }
 }

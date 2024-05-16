@@ -1,85 +1,118 @@
 ﻿using System;
-using Avalonia;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+
+using AvaloniaRoguelike.Services;
 using AvaloniaRoguelike.ViewModels;
-using System.Threading.Tasks;
 
-namespace AvaloniaRoguelike.Model
+namespace AvaloniaRoguelike.Model;
+
+public class GameField : ViewModelBase
 {
-    public class GameField
+    public static GameField DesignInstance { get; } = new GameField(0);
+
+    private readonly TerrainTile[,] _map;
+    private readonly IMapGeneratingService _mapGeneratingService;
+
+    public const double CellSize = 32;
+    public const int Default_Width = 32;
+    public const int Default_Height = 24;
+
+    public GameField(int lvl) : this(Default_Width, Default_Height, lvl) { }
+
+    public GameField(int width, int height, int lvl)
     {
-        public static GameField DesignInstance { get; } = new GameField(0);
-        public const double CellSize = 32;
+        Width = width;
+        Height = height;
+        Lvl = lvl;
+        GameObjects = [];
+        _map = new TerrainTile[Width, Height];
+        _mapGeneratingService = new MapGeneratingService();
+        _mapGeneratingService.InitializeMap(this);
 
-        public ObservableCollection<GameObject> GameObjects { get; } = new ObservableCollection<GameObject>();
-
-        public TerrainTile[,] Tiles { get; }
-
-        public Map Map { get; } = new Map();
-
-        public Random Random { get; } = new Random();
-        public int Lvl { get; }
-        public Player Player { get; }
-        public Exit Exit { get; }
-        public int Height { get; }
-        public int Width { get; }
-
-        public GameField(int lvl) : this(32, 24, lvl) { }
-
-        public GameField(int width, int height, int lvl)
+        // TODO: Deserialize field
+        for (int x = 0; x < width; x++)
         {
-            Width = width;
-            Height = height;
-            Lvl = lvl;
-            Tiles = new TerrainTile[width, height];
-            // TODO: Deserialize field
-            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
             {
-                for (int y = 0; y < height; y++)
-                {
-                    GameObjects.Add(
-                        Tiles[x, y] =
-                            new TerrainTile(new Point(x * CellSize, y * CellSize), GetTypeForCoords(x, y)));
-                }
-            }
-
-            GameObjects.Add(
-                Player = new Player(this, new CellLocation(GetCoords()), Facing.East));
-            GameObjects.Add(
-                Exit = new Exit(new CellLocation(GetCoords()).ToPoint()));
-
-            for (var c = 0; c < 5; c++)
-            {
-                GameObjects.Add(GetRandomEnemy());
+                GameObjects.Add(this[x, y]);
             }
         }
+        GameObjects.Add(Player = new Player(this, new CellLocation(GetCoords()), Facing.East));
+        GameObjects.Add(Exit = new Exit(new CellLocation(GetCoords()).ToPoint()));
 
-        private TerrainTileType GetTypeForCoords(int x, int y)
+        for (var c = 0; c < 5; c++)
         {
-            if (Map[x, y] == ".") return TerrainTileType.Plain;
-            else if (Map[x, y] == "#") return TerrainTileType.Wall;
-            return TerrainTileType.Background;
+            GameObjects.Add(GetRandomEnemy());
         }
+    }
 
-        private (int, int) GetCoords()
+    public TerrainTile this[int x, int y]
+    {
+        get => _map[x, y];
+        set => _map[x, y] = value;
+    }
+
+    public TerrainTile this[CellLocation location] => _map[location.X, location.Y];
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public ObservableCollection<GameObject> GameObjects { get; }
+
+    public int Lvl { get; }
+
+    public Random Random { get; } = new();
+
+    public Player Player { get; }
+
+    public Exit Exit { get; }
+
+    public int Height { get; }
+
+    public int Width { get; }
+
+    public TerrainTile[] GetTilesAtSight(CellLocation cell, int sightRadius)
+    {
+        var list = new List<TerrainTile>();
+        foreach (var tile in _map)
         {
-            int x = Random.Next(0, Width);
-            int y = Random.Next(0, Height);
-            while (!(Tiles[x, y].IsPassable))
+            if (tile.IsPassable && tile.IsInRange(cell, sightRadius))
             {
-                x = Random.Next(0, Width);
-                y = Random.Next(0, Height);
+                list.Add(tile);
             }
-            return (x, y);
         }
+        return list.ToArray();
+        //return _map
+        //    .Cast<TerrainTile>()
+        //    .Where(tile => tile.IsPassable && tile.IsInRange(cell, sightRadius))
+        //    .ToArray();
+    }
 
-        private Enemy GetRandomEnemy()
+    private (int, int) GetCoords()
+    {
+        int x = Random.Next(0, Width);
+        int y = Random.Next(0, Height);
+        while (!(this[x, y].IsPassable))
         {
-            if (Random.Next(0, 2) == 1)
-            {
-                return new Mummy(this, new CellLocation(GetCoords()), (Facing)Random.Next(4), Lvl);
-            }
-            return new Scarab(this, new CellLocation(GetCoords()), (Facing)Random.Next(4), Lvl);
+            x = Random.Next(0, Width);
+            y = Random.Next(0, Height);
         }
+        return (x, y);
+    }
+
+    private Facing GetRandomFacing()
+    {
+        return (Facing)Random.Next(4);
+    }
+
+    private Enemy GetRandomEnemy()
+    {
+        if (Random.Next(0, 2) == 1)
+        {
+            return new Mummy(this, new CellLocation(GetCoords()), GetRandomFacing(), Lvl);
+        }
+        return new Scarab(this, new CellLocation(GetCoords()), GetRandomFacing(), Lvl);
     }
 }

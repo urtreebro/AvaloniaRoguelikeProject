@@ -1,10 +1,9 @@
-﻿namespace AvaloniaRoguelike.Model
+﻿namespace AvaloniaRoguelike.Model;
+
+public enum Facing
 {
-    public enum Facing
-    {
-        North,
-        East,
-        South,
-        West
-    }
+    North,
+    East,
+    South,
+    West
 }
