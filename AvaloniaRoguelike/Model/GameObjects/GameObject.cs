@@ -29,6 +29,12 @@ public abstract class GameObject : ReactiveObject
 
     public virtual int Layer => 0;
 
+    public bool IsInRange(CellLocation otherCell, int sightRadius)
+    {
+        return (CellLocation.X - otherCell.X) * (CellLocation.X - otherCell.X)
+             + (CellLocation.Y - otherCell.Y) * (CellLocation.Y - otherCell.Y) <= sightRadius * sightRadius;
+    }
+
     protected GameObject(Point location)
     {
         Location = location;

@@ -34,21 +34,27 @@
 
 						</Style>
 					</Border.Styles>
-					<Image Width="32" Height="32"
-						   Source="/Assets/Player.png"
-						   RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+          <StackPanel Orientation="Vertical">
+            <TextBlock Text="{Binding Health}" />
+            <Image Width="32" Height="32"
+                 Source="/Assets/Player.png"
+                 RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+          </StackPanel>
 				</Border>
 			</DataTemplate>
+      
 			<DataTemplate DataType="{x:Type model:Mummy}">
 				<Image Width="32" Height="32"
 					   Source="/Assets/Mummy.png"
 					   RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
 			</DataTemplate>
+      
 			<DataTemplate DataType="{x:Type model:Scarab}">
 				<Image Width="32" Height="32"
 					   Source="/Assets/Scarab.png"
 					   RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
 			</DataTemplate>
+      
 			<DataTemplate DataType="{x:Type model:Exit}">
 				<Border ClipToBounds="False">
 					<Border.Styles>
@@ -60,6 +66,7 @@
 						   Source="/Assets/Exit.png"/>
 				</Border>
 			</DataTemplate>
+      
 		</ItemsControl.DataTemplates>
 	</ItemsControl>
 </UserControl>

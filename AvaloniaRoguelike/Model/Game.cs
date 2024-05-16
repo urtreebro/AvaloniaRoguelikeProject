@@ -32,20 +32,28 @@ public class Game : GameBase
         }
     }
 
+
+    public Player Player
+    {
+        get { return Field.Player; }
+    }
+
     protected override void Tick()
     {
         SetPlayerMovingTarget();
 
-        SetEnemyMovingTarget();
+        //SetEnemyMovingTarget();
+
+        DoGameObjectsLogic();
 
         MoveGameObjects();
 
-        if (Field.Player.CellLocation.ToPoint() == Field.Exit.Location)
+        if (Player.CellLocation.ToPoint() == Field.Exit.Location)
         {
             Field = new(Lvl);
         }
 
-        if (Field.Player.IsNewLvl())
+        if (Player.IsNewLvl())
         {
             LvlUp();
         }
@@ -73,25 +81,38 @@ public class Game : GameBase
 
     private void SetEnemyMovingTarget()
     {
-        foreach (var enemy in _field.GameObjects.OfType<Enemy>())
+        foreach (var enemy in Field.GameObjects.OfType<Enemy>())
+        {
             if (!enemy.IsMoving)
             {
                 if (!enemy.SetTarget(enemy.Facing))
                 {
                     if (!enemy.SetTarget((Facing)_rnd.Next(4)))
+                    {
                         enemy.SetTarget(null);
+                    }
                 }
             }
+        }
+    }
+
+    private void DoGameObjectsLogic()
+    {
+        var currentObjects = Field.GameObjects.OfType<MovingGameObject>().Except(new MovingGameObject[] { Player }).ToList();
+        foreach (var obj in currentObjects)
+        {
+            obj.DoMainLogicEachGameTick();
+        }
     }
 
     private bool IsGameRunning()
     {
-        return Field.Player.IsAlive();
+        return Player.IsAlive();
     }
 
     private void LvlUp()
     {
         Lvl++;
-        Field.Player.LvlUp();
+        Player.LvlUp();
     }
 }

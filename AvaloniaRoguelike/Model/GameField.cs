@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 using AvaloniaRoguelike.Services;
 using AvaloniaRoguelike.ViewModels;
@@ -70,6 +72,23 @@ public class GameField : ViewModelBase
     public int Height { get; }
 
     public int Width { get; }
+
+    public TerrainTile[] GetTilesAtSight(CellLocation cell, int sightRadius)
+    {
+        var list = new List<TerrainTile>();
+        foreach (var tile in _map)
+        {
+            if (tile.IsPassable && tile.IsInRange(cell, sightRadius))
+            {
+                list.Add(tile);
+            }
+        }
+        return list.ToArray();
+        //return _map
+        //    .Cast<TerrainTile>()
+        //    .Where(tile => tile.IsPassable && tile.IsInRange(cell, sightRadius))
+        //    .ToArray();
+    }
 
     private (int, int) GetCoords()
     {

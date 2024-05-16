@@ -14,6 +14,15 @@ public abstract class MovingGameObject : GameObject
     private Facing _facing;
     private CellLocation _cellLocation;
     private CellLocation _targetCellLocation;
+    protected MovingGameObject _targetMovingGameObject;
+
+    protected int _sightRadius = 3;
+    protected int _attackRadius = 1;
+    protected TimeSpan _lastAttackTime = DateTime.Now.TimeOfDay;
+    protected TimeSpan _attackCooldown = TimeSpan.FromSeconds(2);
+    protected int _health = 100;
+    protected int Damage = 3;
+
 
     private readonly IPathFindingService _pathFindingService;
 
@@ -37,6 +46,15 @@ public abstract class MovingGameObject : GameObject
         set
         {
             this.RaiseAndSetIfChanged(ref _facing, value);
+        }
+    }
+
+    public int Health
+    {
+        get { return _health; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _health, value);
         }
     }
 
@@ -65,6 +83,55 @@ public abstract class MovingGameObject : GameObject
 
     protected virtual double SpeedFactor => (double)1 / 15; // TODO: Read from config
 
+    public virtual void DoMainLogicEachGameTick()
+    {
+        // Получить все объекты в поле зрения
+        var tiles = GetTilesAtSight();
+        // Если среди них есть противник (игрок) - идти к игроку
+        var isEnemyInRange = CheckIfEnemyInRange(tiles);
+        // Если игрок на соседней клетке или достижим атакой с текущей - атаковать с заданной частотой
+        var canAttackEnemy = CheckCanAttackEnemy();
+
+        // противник в зоне видимости, но нельзя атаковать - пытаться идти к нему
+        // противник в зоне видимости и можно его атаковать - атаковать
+        if (isEnemyInRange && !canAttackEnemy)
+        {
+            // идти к цели
+            if (!IsMoving)
+            {
+                SetTarget(_field.Player.CellLocation);
+            }
+            //TargetCellLocation = _field.Player.CellLocation;
+            _targetMovingGameObject = _field.Player;
+            //var path = _pathFindingService.FindPath(_field, CellLocation, TargetCellLocation);
+            //if (path == null)
+            //{
+            //    // TODO: MakarovEA, log.Debug?
+            //    return;
+            //}
+            return;
+        }
+        else if (isEnemyInRange && canAttackEnemy)
+        {
+            // атаковать цель
+            if (DateTime.Now.TimeOfDay - _lastAttackTime > _attackCooldown)
+            {
+                _lastAttackTime = DateTime.Now.TimeOfDay;
+                AttackSelectedTarget();
+            }
+            return;
+        }
+        else
+        {
+            _targetMovingGameObject = null;
+            // Иначе случайно бродить
+            if (!IsMoving)
+            {
+                SetTarget(GetRandomFacing());
+            }
+        }
+    }
+
     public bool SetTarget(Facing? facing)
         => SetTarget(facing.HasValue ? GetTileAtDirection(facing.Value) : CellLocation);
 
@@ -75,6 +142,40 @@ public abstract class MovingGameObject : GameObject
                      _field[TargetCellLocation.X, TargetCellLocation.Y].Speed) / 2
                     * SpeedFactor;
     }
+
+    private Facing GetRandomFacing()
+    {
+        return (Facing)Random.Shared.Next(4);
+    }
+
+    private TerrainTile[] GetTilesAtSight()
+    {
+        return _field.GetTilesAtSight(CellLocation, _sightRadius);
+    }
+
+    private bool CheckIfEnemyInRange(TerrainTile[] tiles)
+    {
+        return tiles.Any(t => t.CellLocation == _field.Player.CellLocation);
+    }
+
+    private bool CheckCanAttackEnemy()
+    {
+        if (_targetMovingGameObject is null)
+        {
+            return false;
+        }
+        return IsInRange(_targetMovingGameObject.CellLocation, _attackRadius);
+    }
+
+    private void AttackSelectedTarget()
+    {
+        if (_targetMovingGameObject.Health > 0)
+        {
+            _targetMovingGameObject.Health -= Damage;
+        }
+    }
+
+
     //TODO: https://faronbracy.github.io/RogueSharp/ need to edit brenches, cause Map needed and, maybe, redo pathfinding using roguesharp library
     public void MoveToTarget()
     {
@@ -158,8 +259,13 @@ public abstract class MovingGameObject : GameObject
     private bool CheckIfDestinationMatchesTarget(CellLocation loc)
     {
         return _field.GameObjects.OfType<MovingGameObject>()
-                .Any(t => t != this && (t.CellLocation == loc || t.TargetCellLocation == loc));
+                .Any(t => t != this && t.TargetCellLocation == loc);
     }
+    //private bool CheckIfDestinationMatchesTarget(CellLocation loc)
+    //{
+    //    return _field.GameObjects.OfType<MovingGameObject>()
+    //            .Any(t => t != this && (t.CellLocation == loc || t.TargetCellLocation == loc));
+    //}
 
     private bool IsTilePassable(CellLocation loc)
     {

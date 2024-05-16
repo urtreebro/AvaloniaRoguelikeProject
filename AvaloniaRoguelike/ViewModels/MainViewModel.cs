@@ -11,7 +11,6 @@ public class MainViewModel : ViewModelBase
     {
         var field = new GameField(0);
         _game = new Game(field);
-        _game.Start();
     }
 
     public Game Game
@@ -21,5 +20,10 @@ public class MainViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _game, value);
         }
+    }
+
+    public void StartGame()
+    {
+        _game.Start();
     }
 }

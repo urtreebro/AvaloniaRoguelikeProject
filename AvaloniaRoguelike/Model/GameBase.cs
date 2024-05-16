@@ -17,8 +17,15 @@ public abstract class GameBase : ReactiveObject
 
     private void DoTick()
     {
-        Tick();
-        CurrentTick++;
+        try
+        {
+            Tick();
+            CurrentTick++;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
     }
 
     protected abstract void Tick();

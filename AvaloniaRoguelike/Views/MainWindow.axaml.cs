@@ -25,7 +25,8 @@ namespace AvaloniaRoguelike.Views
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            Keyboard.Keys.Remove(e.Key);
+            //Keyboard.Keys.Remove(e.Key);
+            Keyboard.Keys.Clear();
             base.OnKeyUp(e);
         }
     }

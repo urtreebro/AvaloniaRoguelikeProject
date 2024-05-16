@@ -7,7 +7,6 @@ namespace AvaloniaRoguelike.ViewModels
         public MainMenuViewModel()
         {
 
-        } 
-    
+        }
     }
 }

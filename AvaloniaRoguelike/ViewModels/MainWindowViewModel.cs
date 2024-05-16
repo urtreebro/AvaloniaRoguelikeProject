@@ -32,6 +32,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         // 1 - сама игра
         Content = gameViewModels[1];
+        ((MainViewModel)gameViewModels[1]).StartGame();
     }
 
     public void ButtonQuitClick()
