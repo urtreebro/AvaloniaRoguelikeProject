@@ -1,4 +1,4 @@
-﻿using AvaloniaRoguelike.Model;
+using AvaloniaRoguelike.Model;
 
 namespace AvaloniaRoguelike.ViewModels
 {
@@ -6,7 +6,9 @@ namespace AvaloniaRoguelike.ViewModels
     {
         public MainMenuViewModel()
         {
-
+        
         }
+        
+        public string Name { get; set; }
     }
 }
