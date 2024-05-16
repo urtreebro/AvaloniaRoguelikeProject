@@ -10,8 +10,6 @@ namespace AvaloniaRoguelike.Model
     {
         bool IsAlive();
 
-        //void TakeDamage();
-
-        //void Die();
+        void GetDamage(int attack);
     }
 }

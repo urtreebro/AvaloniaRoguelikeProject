@@ -4,37 +4,31 @@ using System;
 using ReactiveUI;
 using AvaloniaRoguelike.ViewModels;
 
-namespace AvaloniaRoguelike.Model;
-
-public abstract class GameBase : ReactiveObject
+namespace AvaloniaRoguelike.Model
 {
-    private readonly DispatcherTimer _timer = new() { Interval = new TimeSpan(0, 0, 0, 0, (int)DeltaTime) };
-
-    protected GameBase()
+    public abstract class GameBase : ReactiveObject
     {
-        _timer.Tick += delegate { DoTick(); };
-    }
+        private readonly DispatcherTimer _timer = new() { Interval = new TimeSpan(0, 0, 0, 0, 1000 / TicksPerSecond) };
 
-    private void DoTick()
-    {
-        try
+        protected GameBase()
+        {
+            _timer.Tick += delegate { DoTick(); };
+        }
+
+        private void DoTick()
         {
             Tick();
             CurrentTick++;
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.ToString());
-        }
+
+        protected abstract void Tick();
+
+        public const int TicksPerSecond = 60;
+        public long CurrentTick { get; private set; }
+
+        public int Level { get; protected set; }
+
+        public void Start() => _timer.IsEnabled = true;
+        public void Stop() => _timer.IsEnabled = false;
     }
-
-    protected abstract void Tick();
-
-    public const int TicksPerSecond = 60;
-    public static double DeltaTime = 1000 / TicksPerSecond;
-    public long CurrentTick { get; private set; }
-    public int Lvl { get; protected set; }
-
-    public void Start() => _timer.IsEnabled = true;
-    public void Stop() => _timer.IsEnabled = false;
 }

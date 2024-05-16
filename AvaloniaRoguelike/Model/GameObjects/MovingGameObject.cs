@@ -1,304 +1,308 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-
-using AvaloniaRoguelike.Services;
-
+using Avalonia;
 using ReactiveUI;
 
-namespace AvaloniaRoguelike.Model;
-
-public abstract class MovingGameObject : GameObject
+namespace AvaloniaRoguelike.Model
 {
-    private GameField _field;
-    private Facing _facing;
-    private CellLocation _cellLocation;
-    private CellLocation _targetCellLocation;
-    protected MovingGameObject _targetMovingGameObject;
-
-    protected int _sightRadius = 3;
-    protected int _attackRadius = 1;
-    protected TimeSpan _lastAttackTime = DateTime.Now.TimeOfDay;
-    protected TimeSpan _attackCooldown = TimeSpan.FromSeconds(2);
-    protected int _health = 100;
-    protected int Damage = 3;
-
-
-    private readonly IPathFindingService _pathFindingService;
-
-    public MovingGameObject(
-        GameField field,
-        CellLocation location,
-        Facing facing)
-        : base(location.ToPoint())
+    public abstract class MovingGameObject : GameObject
     {
-        _field = field;
-        Facing = facing;
-        CellLocation = TargetCellLocation = location;
-        _pathFindingService = new AStarPathFindingService();
-    }
+        private GameField _field;
+        private Facing _facing;
+        private CellLocation _cellLocation;
+        private CellLocation _targetCellLocation;
 
-    public override int Layer => 1;
 
-    public Facing Facing
-    {
-        get { return _facing; }
-        set
+        protected MovingGameObject(
+            GameField field,
+            CellLocation location,
+            Facing facing)
+            : base(location.ToPoint())
+
         {
-            this.RaiseAndSetIfChanged(ref _facing, value);
+            _field = field;
+            Facing = facing;
+            CellLocation = TargetCellLocation = location;
+
         }
-    }
+        public override int Layer => 1;
 
-    public int Health
-    {
-        get { return _health; }
-        set
+        public Facing Facing
         {
-            this.RaiseAndSetIfChanged(ref _health, value);
-        }
-    }
-
-    public override CellLocation CellLocation
-    {
-        get { return _cellLocation; }
-        protected set
-        {
-            this.RaiseAndSetIfChanged(ref _cellLocation, value);
-            this.RaiseAndSetIfChanged(ref _cellLocation, value, nameof(IsMoving));
-            Location = CellLocation.ToPoint();
-        }
-    }
-
-    public CellLocation TargetCellLocation
-    {
-        get { return _targetCellLocation; }
-        private set
-        {
-            this.RaiseAndSetIfChanged(ref _targetCellLocation, value);
-            this.RaiseAndSetIfChanged(ref _targetCellLocation, value, nameof(IsMoving));
-        }
-    }
-
-    public bool IsMoving => TargetCellLocation != CellLocation;
-
-    protected virtual double SpeedFactor => (double)1 / 15; // TODO: Read from config
-
-    public virtual void DoMainLogicEachGameTick()
-    {
-        // Получить все объекты в поле зрения
-        var tiles = GetTilesAtSight();
-        // Если среди них есть противник (игрок) - идти к игроку
-        var isEnemyInRange = CheckIfEnemyInRange(tiles);
-        // Если игрок на соседней клетке или достижим атакой с текущей - атаковать с заданной частотой
-        var canAttackEnemy = CheckCanAttackEnemy();
-
-        // противник в зоне видимости, но нельзя атаковать - пытаться идти к нему
-        // противник в зоне видимости и можно его атаковать - атаковать
-        if (isEnemyInRange && !canAttackEnemy)
-        {
-            // идти к цели
-            if (!IsMoving)
+            get { return _facing; }
+            set
             {
-                SetTarget(_field.Player.CellLocation);
-            }
-            //TargetCellLocation = _field.Player.CellLocation;
-            _targetMovingGameObject = _field.Player;
-            //var path = _pathFindingService.FindPath(_field, CellLocation, TargetCellLocation);
-            //if (path == null)
-            //{
-            //    // TODO: MakarovEA, log.Debug?
-            //    return;
-            //}
-            return;
-        }
-        else if (isEnemyInRange && canAttackEnemy)
-        {
-            // атаковать цель
-            if (DateTime.Now.TimeOfDay - _lastAttackTime > _attackCooldown)
-            {
-                _lastAttackTime = DateTime.Now.TimeOfDay;
-                AttackSelectedTarget();
-            }
-            return;
-        }
-        else
-        {
-            _targetMovingGameObject = null;
-            // Иначе случайно бродить
-            if (!IsMoving)
-            {
-                SetTarget(GetRandomFacing());
+                this.RaiseAndSetIfChanged(ref _facing, value);
             }
         }
-    }
 
-    public bool SetTarget(Facing? facing)
-        => SetTarget(facing.HasValue ? GetTileAtDirection(facing.Value) : CellLocation);
-
-    private double GetSpeed()
-    {
-        return GameField.CellSize *
-                    (_field[CellLocation.X, CellLocation.Y].Speed +
-                     _field[TargetCellLocation.X, TargetCellLocation.Y].Speed) / 2
-                    * SpeedFactor;
-    }
-
-    private Facing GetRandomFacing()
-    {
-        return (Facing)Random.Shared.Next(4);
-    }
-
-    private TerrainTile[] GetTilesAtSight()
-    {
-        return _field.GetTilesAtSight(CellLocation, _sightRadius);
-    }
-
-    private bool CheckIfEnemyInRange(TerrainTile[] tiles)
-    {
-        return tiles.Any(t => t.CellLocation == _field.Player.CellLocation);
-    }
-
-    private bool CheckCanAttackEnemy()
-    {
-        if (_targetMovingGameObject is null)
+        public CellLocation CellLocation
         {
-            return false;
-        }
-        return IsInRange(_targetMovingGameObject.CellLocation, _attackRadius);
-    }
-
-    private void AttackSelectedTarget()
-    {
-        if (_targetMovingGameObject.Health > 0)
-        {
-            _targetMovingGameObject.Health -= Damage;
-        }
-    }
-
-
-    //TODO: https://faronbracy.github.io/RogueSharp/ need to edit brenches, cause Map needed and, maybe, redo pathfinding using roguesharp library
-    public void MoveToTarget()
-    {
-        if (TargetCellLocation == CellLocation)
-        {
-            return;
-        }
-
-        var path = _pathFindingService.FindPath(_field, CellLocation, TargetCellLocation);
-        if (path == null)
-        {
-            // TODO: MakarovEA, log.Debug?
-            return;
-        }
-        var nextPathCell = path.Skip(1).First().Position;
-        var direction = GetDirection(CellLocation, nextPathCell);
-        var speed = GetSpeed();
-
-        var movingRules = new Dictionary<Facing, Action>
-        {
+            get { return _cellLocation; }
+            private set
             {
-                Facing.North, () =>
-                {
-                    Location = Location.WithY(Location.Y - speed);
-                    if (Location.Y / GameField.CellSize <= TargetCellLocation.Y)
-                        CellLocation = TargetCellLocation;
-                } 
-            },
-            {
-                Facing.South, () =>
-                {
-                    Location = Location.WithY(Location.Y + speed);
-                    if (Location.Y / GameField.CellSize >= TargetCellLocation.Y)
-                        CellLocation = TargetCellLocation;
-                }
-            },
-            {
-                Facing.West, () => 
-                {
-                    Location = Location.WithX(Location.X - speed);
-                    if (Location.X / GameField.CellSize <= TargetCellLocation.X)
-                        CellLocation = TargetCellLocation;
-                }
-            },
-            {
-                Facing.East, () =>
-                {
-                    Location = Location.WithX(Location.X + speed);
-                    if (Location.X / GameField.CellSize >= TargetCellLocation.X)
-                        CellLocation = TargetCellLocation;
-                }
+                this.RaiseAndSetIfChanged(ref _cellLocation, value);
+                this.RaiseAndSetIfChanged(ref _cellLocation, value, nameof(IsMoving));
             }
-        };
-        movingRules[direction]();
-    }
+        }
 
+        public CellLocation TargetCellLocation
+        {
+            get { return _targetCellLocation; }
+            private set
+            {
+                this.RaiseAndSetIfChanged(ref _targetCellLocation, value);
+                this.RaiseAndSetIfChanged(ref _targetCellLocation, value, nameof(IsMoving));
+            }
+        }
 
-    private bool SetTarget(CellLocation loc)
-    {
-        if (IsMoving)
-            throw new InvalidOperationException("Unable to change direction while moving");
+        public bool IsMoving => TargetCellLocation != CellLocation;
 
-        if (loc == CellLocation) 
+        protected virtual double SpeedFactor => (double)1 / 12; // TODO: Read from config
+
+        public bool SetTarget(Facing? facing)
+            => SetTarget(facing.HasValue ? GetTileAtDirection(facing.Value) : CellLocation);
+
+        private double GetSpeed()
+        {
+            double speed = GameField.CellSize *
+                        (_field.Tiles[CellLocation.X, CellLocation.Y].Speed +
+                         _field.Tiles[TargetCellLocation.X, TargetCellLocation.Y].Speed) / 2
+                        * SpeedFactor;
+            return speed;
+        }
+
+        public void MoveToTarget()
+        {
+            if (TargetCellLocation == CellLocation)
+                return;
+
+            // TODO: extract to methods 
+            var speed = GetSpeed();
+            var pos = Location;
+            var direction = GetDirection(CellLocation, TargetCellLocation);
+
+            switch (direction)
+            {
+                case Facing.North:
+                    pos = pos.WithY(pos.Y - speed);
+                    Location = pos;
+                    if (pos.Y / GameField.CellSize <= TargetCellLocation.Y)
+                        SetLocation(TargetCellLocation);
+                    break;
+                case Facing.South:
+                    pos = pos.WithY(pos.Y + speed);
+                    Location = pos;
+                    if (pos.Y / GameField.CellSize >= TargetCellLocation.Y)
+                        SetLocation(TargetCellLocation);
+                    break;
+                case Facing.West:
+                    pos = pos.WithX(pos.X - speed);
+                    Location = pos;
+                    if (pos.X / GameField.CellSize <= TargetCellLocation.X)
+                        SetLocation(TargetCellLocation);
+                    break;
+                case Facing.East:
+                    pos = pos.WithX(pos.X + speed);
+                    Location = pos;
+                    if (pos.X / GameField.CellSize >= TargetCellLocation.X)
+                        SetLocation(TargetCellLocation);
+                    break;
+            }
+        }
+
+        private bool SetTarget(CellLocation loc)
+        {
+            if (IsMoving) throw new InvalidOperationException("Unable to change direction while moving");
+
+            if (loc == CellLocation) return true;
+
+            Facing = GetDirection(CellLocation, loc);
+
+            if (IsLocationOutOfBounds(loc)) return false;
+
+            if (!IsTilePassable(loc)) return false;
+
+            if (CheckIfDestinationMatchesTarget(loc))
+                return false;
+
+            TargetCellLocation = loc;
             return true;
+        }
 
-        Facing = GetDirection(CellLocation, loc);
-
-        if (IsLocationOutOfBounds(loc)) 
-            return false;
-
-        if (!IsTilePassable(loc)) 
-            return false;
-
-        if (CheckIfDestinationMatchesTarget(loc))
-            return false;
-
-        TargetCellLocation = loc;
-        return true;
-    }
-
-    private bool CheckIfDestinationMatchesTarget(CellLocation loc)
-    {
-        return _field.GameObjects.OfType<MovingGameObject>()
-                .Any(t => t != this && t.TargetCellLocation == loc);
-    }
-    //private bool CheckIfDestinationMatchesTarget(CellLocation loc)
-    //{
-    //    return _field.GameObjects.OfType<MovingGameObject>()
-    //            .Any(t => t != this && (t.CellLocation == loc || t.TargetCellLocation == loc));
-    //}
-
-    private bool IsTilePassable(CellLocation loc)
-    {
-        return _field[loc.X, loc.Y].IsPassable;
-    }
-
-    private bool IsLocationOutOfBounds(CellLocation loc)
-    {
-        return (loc.X < 0 || loc.Y < 0) || (loc.X >= _field.Width || loc.Y >= _field.Height);
-    }
-
-    private CellLocation GetTileAtDirection(Facing facing)
-    {
-        return facing switch
+        private bool CheckIfDestinationMatchesTarget(CellLocation loc)
         {
-            // TODO: MakarovEA, не создавать новую клетку, а получать нужную клетку карты по координатам, сравнить
-            Facing.North => _field[CellLocation.X, CellLocation.Y - 1].CellLocation, //CellLocation.WithY(CellLocation.Y - 1),
-            Facing.South => _field[CellLocation.X, CellLocation.Y + 1].CellLocation,
-            Facing.West => _field[CellLocation.X - 1, CellLocation.Y].CellLocation,
-            Facing.East => _field[CellLocation.X + 1, CellLocation.Y].CellLocation,
-            _ => throw new NotImplementedException(),
-        };
+            return _field.GameObjects.OfType<MovingGameObject>()
+                    .Any(t => t != this && (t.CellLocation == loc || t.TargetCellLocation == loc));
+        }
+
+        private bool IsTilePassable(CellLocation loc)
+        {
+            return _field.Tiles[loc.X, loc.Y].IsPassable;
+        }
+
+        private bool IsLocationOutOfBounds(CellLocation loc)
+        {
+            return (loc.X < 0 || loc.Y < 0) || (loc.X >= _field.Width || loc.Y >= _field.Height);
+
+        }
+
+        private CellLocation GetTileAtDirection(Facing facing)
+        {
+            return facing switch
+            {
+                Facing.North => CellLocation.WithY(CellLocation.Y - 1),
+                Facing.South => CellLocation.WithY(CellLocation.Y + 1),
+                Facing.West => CellLocation.WithX(CellLocation.X - 1),
+                Facing.East => CellLocation.WithX(CellLocation.X + 1),
+            };
+        }
+
+        private Facing GetDirection(CellLocation current, CellLocation target)
+        {
+            // TODO: to switch expression?
+            if (target.X < current.X)
+                return Facing.West;
+            if (target.X > current.X)
+                return Facing.East;
+            if (target.Y < current.Y)
+                return Facing.North;
+            return Facing.South;
+        }
+
+        private void SetLocation(CellLocation loc)
+        {
+            CellLocation = loc;
+            Location = loc.ToPoint();
+        }
+
+
+
+        //A* pathfinding
+        public static List<Point> FindPath(int[,] field, Point start, Point goal)
+        {
+            var closedSet = new Collection<PathNode>();
+            var openSet = new Collection<PathNode>();
+
+            PathNode startNode = new PathNode()
+            {
+                Position = start,
+                CameFrom = null,
+                PathLengthFromStart = 0,
+                HeuristicEstimatePathLength = GetHeuristicPathLength(start, goal)
+            };
+            openSet.Add(startNode);
+            while (openSet.Count > 0)
+            {
+                var currentNode = openSet.OrderBy(node =>
+                  node.EstimateFullPathLength).First();
+
+                if (currentNode.Position == goal)
+                    return GetPathForNode(currentNode);
+
+                openSet.Remove(currentNode);
+                closedSet.Add(currentNode);
+
+                foreach (var neighbourNode in GetNeighbours(currentNode, goal, field))
+                {
+                    if (closedSet.Count(node => node.Position == neighbourNode.Position) > 0)
+                        continue;
+                    var openNode = openSet.FirstOrDefault(node =>
+                      node.Position == neighbourNode.Position);
+
+                    if (openNode == null)
+                        openSet.Add(neighbourNode);
+                    else
+                      if (openNode.PathLengthFromStart > neighbourNode.PathLengthFromStart)
+                    {
+                        openNode.CameFrom = currentNode;
+                        openNode.PathLengthFromStart = neighbourNode.PathLengthFromStart;
+                    }
+                }
+            }
+            return null;
+        }
+
+        private static int GetDistanceBetweenNeighbours()
+        {
+            //можно переписать в зависимости от ландшафта
+            return 1;
+        }
+
+        private static int GetHeuristicPathLength(Point from, Point to)
+        {
+            return Convert.ToInt32(Math.Abs(from.X - to.X) + Math.Abs(from.Y - to.Y));
+        }
+
+        private static Collection<PathNode> GetNeighbours(PathNode pathNode, Point goal, int[,] field)
+        {
+            var result = new Collection<PathNode>();
+
+            // Соседними точками являются соседние по стороне клетки.
+            Point[] neighbourPoints = new Point[4];
+            neighbourPoints[0] = new Point(pathNode.Position.X + 1, pathNode.Position.Y);
+            neighbourPoints[1] = new Point(pathNode.Position.X - 1, pathNode.Position.Y);
+            neighbourPoints[2] = new Point(pathNode.Position.X, pathNode.Position.Y + 1);
+            neighbourPoints[3] = new Point(pathNode.Position.X, pathNode.Position.Y - 1);
+
+            foreach (var point in neighbourPoints)
+            {
+                // Проверяем, что не вышли за границы карты.
+                if (point.X < 0 || point.X >= field.GetLength(0))
+                    continue;
+                if (point.Y < 0 || point.Y >= field.GetLength(1))
+                    continue;
+                // Проверяем, что по клетке можно ходить.
+                if ((field[(int)point.X, (int)point.Y] != 0) && (field[(int)point.X, (int)point.Y] != 1))
+                    continue;
+                // Заполняем данные для точки маршрута.
+                var neighbourNode = new PathNode()
+                {
+                    Position = point,
+                    CameFrom = pathNode,
+                    PathLengthFromStart = pathNode.PathLengthFromStart +
+                    GetDistanceBetweenNeighbours(),
+                    HeuristicEstimatePathLength = GetHeuristicPathLength(point, goal)
+                };
+                result.Add(neighbourNode);
+            }
+            return result;
+        }
+
+        private static List<Point> GetPathForNode(PathNode pathNode)
+        {
+            var result = new List<Point>();
+            var currentNode = pathNode;
+            while (currentNode != null)
+            {
+                result.Add(currentNode.Position);
+                currentNode = currentNode.CameFrom;
+            }
+            result.Reverse();
+            return result;
+        }
+
     }
 
-    private Facing GetDirection(CellLocation current, CellLocation target)
+    public class PathNode
     {
-        // TODO: to switch expression?
-        if (target.X < current.X)
-            return Facing.West;
-        if (target.X > current.X)
-            return Facing.East;
-        if (target.Y < current.Y)
-            return Facing.North;
-        return Facing.South;
+        // Координаты точки на карте.
+        public Point Position { get; set; }
+        // Длина пути от старта (G).
+        public int PathLengthFromStart { get; set; }
+        // Точка, из которой пришли в эту точку.
+        public PathNode CameFrom { get; set; }
+        // Примерное расстояние до цели (H).
+        public int HeuristicEstimatePathLength { get; set; }
+        // Ожидаемое полное расстояние до цели (F).
+        public int EstimateFullPathLength
+        {
+            get
+            {
+                return this.PathLengthFromStart + this.HeuristicEstimatePathLength;
+            }
+        }
     }
 }
