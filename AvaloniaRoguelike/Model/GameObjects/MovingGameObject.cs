@@ -10,7 +10,7 @@ namespace AvaloniaRoguelike.Model;
 
 public abstract class MovingGameObject : GameObject
 {
-    private GameField _field;
+    protected GameField _field;
     private Facing _facing;
     private CellLocation _cellLocation;
     private CellLocation _targetCellLocation;
@@ -20,10 +20,8 @@ public abstract class MovingGameObject : GameObject
     protected int _attackRadius = 1;
     protected TimeSpan _lastAttackTime = DateTime.Now.TimeOfDay;
     protected TimeSpan _attackCooldown = TimeSpan.FromSeconds(2);
-    protected int _health = 100;
-    protected int Damage = 3;
 
-
+    protected int _health;
     private readonly IPathFindingService _pathFindingService;
 
     public MovingGameObject(
@@ -90,11 +88,11 @@ public abstract class MovingGameObject : GameObject
         // Если среди них есть противник (игрок) - идти к игроку
         var isEnemyInRange = CheckIfEnemyInRange(tiles);
         // Если игрок на соседней клетке или достижим атакой с текущей - атаковать с заданной частотой
-        var canAttackEnemy = CheckCanAttackEnemy();
+        //var canAttackEnemy = CheckCanAttackEnemy();
 
         // противник в зоне видимости, но нельзя атаковать - пытаться идти к нему
         // противник в зоне видимости и можно его атаковать - атаковать
-        if (isEnemyInRange && !canAttackEnemy)
+        if (isEnemyInRange)
         {
             // идти к цели
             if (!IsMoving)
@@ -109,16 +107,6 @@ public abstract class MovingGameObject : GameObject
             //    // TODO: MakarovEA, log.Debug?
             //    return;
             //}
-            return;
-        }
-        else if (isEnemyInRange && canAttackEnemy)
-        {
-            // атаковать цель
-            if (DateTime.Now.TimeOfDay - _lastAttackTime > _attackCooldown)
-            {
-                _lastAttackTime = DateTime.Now.TimeOfDay;
-                AttackSelectedTarget();
-            }
             return;
         }
         else
@@ -143,38 +131,20 @@ public abstract class MovingGameObject : GameObject
                     * SpeedFactor;
     }
 
-    private Facing GetRandomFacing()
+    protected Facing GetRandomFacing()
     {
         return (Facing)Random.Shared.Next(4);
     }
 
-    private TerrainTile[] GetTilesAtSight()
+    protected TerrainTile[] GetTilesAtSight()
     {
         return _field.GetTilesAtSight(CellLocation, _sightRadius);
     }
 
-    private bool CheckIfEnemyInRange(TerrainTile[] tiles)
+    protected bool CheckIfEnemyInRange(TerrainTile[] tiles)
     {
         return tiles.Any(t => t.CellLocation == _field.Player.CellLocation);
     }
-
-    private bool CheckCanAttackEnemy()
-    {
-        if (_targetMovingGameObject is null)
-        {
-            return false;
-        }
-        return IsInRange(_targetMovingGameObject.CellLocation, _attackRadius);
-    }
-
-    private void AttackSelectedTarget()
-    {
-        if (_targetMovingGameObject.Health > 0)
-        {
-            _targetMovingGameObject.Health -= Damage;
-        }
-    }
-
 
     //TODO: https://faronbracy.github.io/RogueSharp/ need to edit brenches, cause Map needed and, maybe, redo pathfinding using roguesharp library
     public void MoveToTarget()
@@ -233,7 +203,7 @@ public abstract class MovingGameObject : GameObject
     }
 
 
-    private bool SetTarget(CellLocation loc)
+    protected bool SetTarget(CellLocation loc)
     {
         if (IsMoving)
             throw new InvalidOperationException("Unable to change direction while moving");

@@ -10,16 +10,16 @@ public class Mummy : Enemy
         : base(field, location, facing, enemylvl)
     { }
 
-    protected override int GetHpByLvl()
+    protected override int GetHealthByLevel()
     {
         return 3 * EnemyLvl + 20;
     }
 
-    protected override int GetAttackByLvl()
+    protected override int GetDamageByLevel()
     {
         return 3 * EnemyLvl + 4;
     }
-    protected override double GetSpeedByLvl()
+    protected override double GetSpeedByLevel()
     {
         return 0.02 * EnemyLvl + 0.5;
     }

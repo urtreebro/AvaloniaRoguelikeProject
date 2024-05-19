@@ -8,6 +8,6 @@ namespace AvaloniaRoguelike.Model
 { 
     public interface IAttacking
     {
-        //void Attack();
+        //void Damage();
     }
 }

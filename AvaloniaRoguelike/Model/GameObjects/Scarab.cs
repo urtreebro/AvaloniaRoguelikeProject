@@ -6,8 +6,8 @@ public class Scarab : Enemy
     //    GameField field,
     //    CellLocation location,
     //    Facing facing,
-    //    int hp,
-    //    int attack,
+    //    int Health,
+    //    int Damage,
     //    double speed)
     //    : base(field, location, facing, 8, 1, 1.8)
     //{ }
@@ -19,16 +19,16 @@ public class Scarab : Enemy
         : base(field, location, facing, enemylvl) 
     { }
 
-    protected override int GetHpByLvl()
+    protected override int GetHealthByLevel()
     {
         return 3 * EnemyLvl + 6;
     }
 
-    protected override int GetAttackByLvl()
+    protected override int GetDamageByLevel()
     {
         return 3 * EnemyLvl + 1;
     }
-    protected override double GetSpeedByLvl()
+    protected override double GetSpeedByLevel()
     {
         return 0.02 * EnemyLvl + 1.2;
     }

@@ -40,13 +40,17 @@ public class Game : GameBase
 
     protected override void Tick()
     {
-        SetPlayerMovingTarget();
+        CheckLastKeyPressed();
+
+        //SetPlayerMovingTarget();
 
         //SetEnemyMovingTarget();
 
         DoGameObjectsLogic();
 
         MoveGameObjects();
+
+        CheckIsDead();
 
         if (Player.CellLocation.ToPoint() == Field.Exit.Location)
         {
@@ -59,6 +63,33 @@ public class Game : GameBase
         }
     }
 
+    private void CheckLastKeyPressed()
+    {
+        Key key = Keyboard.LastKeyPressed();
+        switch (key)
+        {
+            case Key.W:
+                SetPlayerMovingTarget(Facing.North);
+                break;
+            case Key.A:
+                SetPlayerMovingTarget(Facing.West);
+                break;
+            case Key.S:
+                SetPlayerMovingTarget(Facing.South);
+                break;
+            case Key.D:
+                SetPlayerMovingTarget(Facing.East);
+                break;
+            case Key.I:
+                break;
+            case Key.X:
+                Field.Player.Attack();
+                break;
+            default:
+                break;
+        }
+    }
+
     private void MoveGameObjects()
     {
         foreach (var obj in Field.GameObjects.OfType<MovingGameObject>())
@@ -67,16 +98,13 @@ public class Game : GameBase
         }
     }
 
-    private void SetPlayerMovingTarget()
+    private void SetPlayerMovingTarget(Facing facing)
     {
         if (Field.Player.IsMoving)
         {
             return;
         }
-        if (_keyFacingPairs.TryGetValue(Keyboard.LastKeyPressed(), out var facing))
-        {
-            Field.Player.SetTarget(facing);
-        }
+        Field.Player.SetTarget(facing);
     }
 
     private void SetEnemyMovingTarget()
@@ -114,5 +142,21 @@ public class Game : GameBase
     {
         Lvl++;
         Player.LvlUp();
+    }
+
+    public void CheckIsDead()
+    {
+        foreach (var enemy in Field.GameObjects.OfType<Enemy>())
+        {
+            if (!enemy.IsAlive())
+            {
+                RemoveObjectFromField(enemy);
+            }
+        }
+    }
+
+    public void RemoveObjectFromField(GameObject obj)
+    {
+        Field.GameObjects.Remove(obj);
     }
 }

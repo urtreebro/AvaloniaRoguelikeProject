@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Linq;
 
 namespace AvaloniaRoguelike.Model;
 
 public class Player : AliveGameObject, IPlayer
 {
-    public const int DEFAULTHP = 20;
+    public const int DEFAULTHP = 100;
     public const int DEFAULTATTACK = 4;
     public const int DEFAULTSPEED = 8;
 
@@ -14,8 +15,8 @@ public class Player : AliveGameObject, IPlayer
         Facing facing) 
         : base(field, location, facing)
     {
-        HP = DEFAULTHP;
-        Attack = DEFAULTATTACK;
+        Health = DEFAULTHP;
+        Damage = DEFAULTATTACK;
         Speed = DEFAULTSPEED;
         Exp = 0;
         PlayerLvl = 0;
@@ -36,5 +37,32 @@ public class Player : AliveGameObject, IPlayer
     public void LvlUp()
     {
         PlayerLvl++;
+    }
+
+    public void Attack()
+    {
+        AttackSelectedTarget();
+    }
+    protected override void AttackSelectedTarget()
+    {
+        var tiles = GetTilesAtSight();
+        
+        foreach (var tile in tiles)
+        {
+            foreach (MovingGameObject enemy in _field.GameObjects.OfType<Enemy>())
+            {
+                if (tile.CellLocation == enemy.CellLocation)
+                {
+                    _targetMovingGameObject = enemy; 
+                    break;
+                }
+            }
+        }
+        var canAttackEnemy = CheckCanAttackEnemy();
+        if (canAttackEnemy && DateTime.Now.TimeOfDay - _lastAttackTime > _attackCooldown)
+        {
+            _lastAttackTime = DateTime.Now.TimeOfDay;
+            base.AttackSelectedTarget();
+        }
     }
 }

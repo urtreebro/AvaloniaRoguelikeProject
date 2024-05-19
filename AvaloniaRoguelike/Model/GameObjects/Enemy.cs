@@ -10,15 +10,15 @@ public abstract class Enemy : AliveGameObject, IEnemy
         : base(field, location, facing)
     {
         EnemyLvl = enemylvl;
-        HP = GetHpByLvl();
-        Attack = GetAttackByLvl();
-        Speed = GetSpeedByLvl();
+        Health = GetHealthByLevel();
+        Damage = GetDamageByLevel();
+        Speed = GetSpeedByLevel();
     }
 
     public int EnemyLvl { get; protected set; }
 
     protected override double SpeedFactor => Speed * base.SpeedFactor;
-    protected abstract int GetHpByLvl();
-    protected abstract int GetAttackByLvl();
-    protected abstract double GetSpeedByLvl();
+    protected abstract int GetHealthByLevel();
+    protected abstract int GetDamageByLevel();
+    protected abstract double GetSpeedByLevel();
 }
