@@ -10,69 +10,75 @@
              mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="768"
              x:Class="AvaloniaRoguelike.Views.MainView"
              x:DataType="vm:MainViewModel">
-	<ItemsControl
-				  ItemsSource="{Binding Game.Field.GameObjects}"
-				  Width="{Binding Game.Field.Width, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}"
-				  Height="{Binding Game.Field.Height, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}">
+  <ScrollViewer Offset="{Binding Game.Camera.Offset}"
+                HorizontalScrollBarVisibility="Visible"
+                VerticalScrollBarVisibility="Visible"
+								Width="{Binding Game.Camera.Width, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}"
+								Height="{Binding Game.Camera.Height, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}">
+		<ItemsControl
+						ItemsSource="{Binding Game.Field.GameObjects}"
+						Width="{Binding Game.Field.Width, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}"
+						Height="{Binding Game.Field.Height, Converter={x:Static infrastructure:CellToScreenConverter.Instance}, Mode=OneWay}">
 
-		<ItemsControl.ItemsPanel>
-			<ItemsPanelTemplate>
-				<Canvas/>
-			</ItemsPanelTemplate>
-		</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<Canvas/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
 
-		<ItemsControl.DataTemplates>
-			<DataTemplate DataType="{x:Type model:TerrainTile}">
-				<Image Width="32" Height="32"
-					   Source="{Binding Type, Converter={x:Static infrastructure:TerrainTileConverter.Instance}}"/>
-			</DataTemplate>
-
-			<DataTemplate DataType="{x:Type model:Player}">
-				<Border ClipToBounds="False">
-					<Border.Styles>
-						<Style Selector="Border">
-
-						</Style>
-					</Border.Styles>
-          <StackPanel Orientation="Vertical">
-            <TextBlock Text="{Binding Health}" FontSize="8" />
-            <Image Width="32" Height="32"
-                 Source="/Assets/Player.png"
-                 RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
-          </StackPanel>
-				</Border>
-			</DataTemplate>
-      
-			<DataTemplate DataType="{x:Type model:Mummy}">
-				<StackPanel Orientation="Vertical">
-					<TextBlock Text="{Binding Health}" FontSize="8" />
+			<ItemsControl.DataTemplates>
+				<DataTemplate DataType="{x:Type model:TerrainTile}">
 					<Image Width="32" Height="32"
-							Source="/Assets/Mummy.png"
-							RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
-				</StackPanel>
-			</DataTemplate>
-      
-			<DataTemplate DataType="{x:Type model:Scarab}">
-				<StackPanel Orientation="Vertical">
-					<TextBlock Text="{Binding Health}" FontSize="8" />
-					<Image Width="32" Height="32"
-						   Source="/Assets/Scarab.png"
-						   RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
-				</StackPanel>
-			</DataTemplate>
-      
-			<DataTemplate DataType="{x:Type model:Exit}">
-				<Border ClipToBounds="False">
-					<Border.Styles>
-						<Style Selector="Border">
+								Source="{Binding Type, Converter={x:Static infrastructure:TerrainTileConverter.Instance}}"/>
+				</DataTemplate>
 
-						</Style>
-					</Border.Styles>
-					<Image Width="32" Height="32"
-						   Source="/Assets/Exit.png"/>
-				</Border>
-			</DataTemplate>
+				<DataTemplate DataType="{x:Type model:Player}">
+					<Border ClipToBounds="False">
+						<Border.Styles>
+							<Style Selector="Border">
+
+							</Style>
+						</Border.Styles>
+						<StackPanel Orientation="Vertical">
+							<TextBlock Text="{Binding Health}" FontSize="8" />
+							<Image Width="32" Height="32"
+										Source="/Assets/Player.png"
+										RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+						</StackPanel>
+					</Border>
+				</DataTemplate>
       
-		</ItemsControl.DataTemplates>
-	</ItemsControl>
+				<DataTemplate DataType="{x:Type model:Mummy}">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="{Binding Health}" FontSize="8" />
+						<Image Width="32" Height="32"
+								Source="/Assets/Mummy.png"
+								RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+					</StackPanel>
+				</DataTemplate>
+      
+				<DataTemplate DataType="{x:Type model:Scarab}">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="{Binding Health}" FontSize="8" />
+						<Image Width="32" Height="32"
+									Source="/Assets/Scarab.png"
+									RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
+					</StackPanel>
+				</DataTemplate>
+      
+				<DataTemplate DataType="{x:Type model:Exit}">
+					<Border ClipToBounds="False">
+						<Border.Styles>
+							<Style Selector="Border">
+
+							</Style>
+						</Border.Styles>
+						<Image Width="32" Height="32"
+									Source="/Assets/Exit.png"/>
+					</Border>
+				</DataTemplate>
+      
+			</ItemsControl.DataTemplates>
+		</ItemsControl>
+  </ScrollViewer>
 </UserControl>

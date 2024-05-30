@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ReactiveUI;
 using Avalonia.Input;
+using System;
 
 namespace AvaloniaRoguelike.Model;
 
 public class Game : GameBase
 {
     private GameField _field;
+    private Camera _camera;
     private readonly Dictionary<Key, Facing> _keyFacingPairs = new()
     {
         { Key.W, Facing.North},
@@ -17,10 +18,11 @@ public class Game : GameBase
         { Key.D, Facing.East}
     };
 
-    private static readonly Random _rnd = new();
     public Game(GameField field)
     {
-        _field = field;
+        Field = field;
+        _camera = new Camera();
+        MoveCamera();
     }
 
     public GameField Field
@@ -29,6 +31,15 @@ public class Game : GameBase
         set
         {
             this.RaiseAndSetIfChanged(ref _field, value);
+        }
+    }
+
+    public Camera Camera
+    {
+        get { return _camera; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _camera, value);
         }
     }
 
@@ -42,10 +53,6 @@ public class Game : GameBase
     {
         CheckLastKeyPressed();
 
-        //SetPlayerMovingTarget();
-
-        //SetEnemyMovingTarget();
-
         DoGameObjectsLogic();
 
         MoveGameObjects();
@@ -55,6 +62,7 @@ public class Game : GameBase
         if (Player.CellLocation.ToPoint() == Field.Exit.Location)
         {
             Field = new(Lvl);
+            MoveCamera();
         }
 
         if (Player.IsNewLvl())
@@ -63,24 +71,25 @@ public class Game : GameBase
         }
     }
 
+    private void MoveCamera()
+    {
+        Camera.ReCalculateVisibleObjects(Player.Location);
+    }
+
     private void CheckLastKeyPressed()
     {
-        Key key = Keyboard.LastKeyPressed();
+        var key = Keyboard.LastKeyPressed();
         switch (key)
         {
             case Key.W:
-                SetPlayerMovingTarget(Facing.North);
-                break;
             case Key.A:
-                SetPlayerMovingTarget(Facing.West);
-                break;
             case Key.S:
-                SetPlayerMovingTarget(Facing.South);
-                break;
             case Key.D:
-                SetPlayerMovingTarget(Facing.East);
+                SetPlayerMovingTarget(key);
+                MoveCamera();
                 break;
             case Key.I:
+                // TODO: inventory view
                 break;
             case Key.X:
                 Field.Player.Attack();
@@ -98,30 +107,13 @@ public class Game : GameBase
         }
     }
 
-    private void SetPlayerMovingTarget(Facing facing)
+    private void SetPlayerMovingTarget(Key key)
     {
         if (Field.Player.IsMoving)
         {
             return;
         }
-        Field.Player.SetTarget(facing);
-    }
-
-    private void SetEnemyMovingTarget()
-    {
-        foreach (var enemy in Field.GameObjects.OfType<Enemy>())
-        {
-            if (!enemy.IsMoving)
-            {
-                if (!enemy.SetTarget(enemy.Facing))
-                {
-                    if (!enemy.SetTarget((Facing)_rnd.Next(4)))
-                    {
-                        enemy.SetTarget(null);
-                    }
-                }
-            }
-        }
+        Field.Player.SetTarget(_keyFacingPairs[key]);
     }
 
     private void DoGameObjectsLogic()

@@ -7,7 +7,7 @@ public class Player : AliveGameObject, IPlayer
 {
     public const int DEFAULTHP = 100;
     public const int DEFAULTATTACK = 4;
-    public const int DEFAULTSPEED = 8;
+    public const int DEFAULTSPEED = 16;
 
     public Player(
         GameField field,
