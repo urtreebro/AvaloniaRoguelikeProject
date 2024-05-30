@@ -251,8 +251,7 @@ public abstract class MovingGameObject : GameObject
     {
         return facing switch
         {
-            // TODO: MakarovEA, не создавать новую клетку, а получать нужную клетку карты по координатам, сравнить
-            Facing.North => _field[CellLocation.X, CellLocation.Y - 1].CellLocation, //CellLocation.WithY(CellLocation.Y - 1),
+            Facing.North => _field[CellLocation.X, CellLocation.Y - 1].CellLocation,
             Facing.South => _field[CellLocation.X, CellLocation.Y + 1].CellLocation,
             Facing.West => _field[CellLocation.X - 1, CellLocation.Y].CellLocation,
             Facing.East => _field[CellLocation.X + 1, CellLocation.Y].CellLocation,

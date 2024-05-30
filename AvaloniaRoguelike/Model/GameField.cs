@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -16,8 +15,8 @@ public class GameField : ViewModelBase
     private readonly IMapGeneratingService _mapGeneratingService;
 
     public const double CellSize = 32;
-    public const int Default_Width = 32;
-    public const int Default_Height = 24;
+    public const int Default_Width = 64;
+    public const int Default_Height = 48;
 
     public GameField(int lvl) : this(Default_Width, Default_Height, lvl) { }
 
@@ -54,6 +53,11 @@ public class GameField : ViewModelBase
         set => _map[x, y] = value;
     }
 
+    public GameObject this[int index]
+    {
+        get => GameObjects[index];
+    }
+
     public TerrainTile this[CellLocation location] => _map[location.X, location.Y];
 
     /// <summary>
@@ -75,19 +79,10 @@ public class GameField : ViewModelBase
 
     public TerrainTile[] GetTilesAtSight(CellLocation cell, int sightRadius)
     {
-        var list = new List<TerrainTile>();
-        foreach (var tile in _map)
-        {
-            if (tile.IsPassable && tile.IsInRange(cell, sightRadius))
-            {
-                list.Add(tile);
-            }
-        }
-        return list.ToArray();
-        //return _map
-        //    .Cast<TerrainTile>()
-        //    .Where(tile => tile.IsPassable && tile.IsInRange(cell, sightRadius))
-        //    .ToArray();
+        return _map
+            .Cast<TerrainTile>()
+            .Where(tile => tile.IsPassable && tile.IsInRange(cell, sightRadius))
+            .ToArray();
     }
 
     private (int, int) GetCoords()
@@ -102,6 +97,8 @@ public class GameField : ViewModelBase
         return (x, y);
     }
 
+
+    // TODO: MakarovEA, вынести в игру или в отдельный сервис
     private Facing GetRandomFacing()
     {
         return (Facing)Random.Next(4);
