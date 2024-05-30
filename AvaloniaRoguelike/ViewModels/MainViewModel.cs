@@ -26,4 +26,9 @@ public class MainViewModel : ViewModelBase
     {
         _game.Start();
     }
+
+    public void StopGame()
+    {
+        _game.Stop();
+    }
 }

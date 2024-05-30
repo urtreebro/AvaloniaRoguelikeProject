@@ -8,6 +8,11 @@
         Title="AvaloniaRoguelike"
         Width="1024"
         Height="768"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        SystemDecorations="BorderOnly"
+        WindowState="Maximized"
         x:Class="AvaloniaRoguelike.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
 				Design.DataContext="{x:Static model:GameField.DesignInstance}"
@@ -30,5 +35,9 @@
 			<Setter Property="Opacity" Value="0.5"/>
 		</Style>
 	</Window.Styles>
+  
+  <Window.KeyBindings>
+    <KeyBinding Gesture="Escape" Command="{Binding ButtonEscapeCommand, Mode=OneWay}" />
+  </Window.KeyBindings>
 
 </Window>
