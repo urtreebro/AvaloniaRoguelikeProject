@@ -20,8 +20,9 @@ public class Game : GameBase
 
     public Game(GameField field)
     {
-        _field = field;
-        _camera = new Camera(_field);
+        Field = field;
+        _camera = new Camera();
+        MoveCamera();
     }
 
     public GameField Field
@@ -61,6 +62,7 @@ public class Game : GameBase
         if (Player.CellLocation.ToPoint() == Field.Exit.Location)
         {
             Field = new(Lvl);
+            MoveCamera();
         }
 
         if (Player.IsNewLvl())
@@ -71,7 +73,7 @@ public class Game : GameBase
 
     private void MoveCamera()
     {
-        Camera.ReCalculateVisibleObjects(Player.CellLocation);
+        Camera.ReCalculateVisibleObjects(Player.Location);
     }
 
     private void CheckLastKeyPressed()

@@ -25,6 +25,6 @@ public class MainViewModel : ViewModelBase
     public void StartGame()
     {
         _game.Start();
-        _game.Camera.ReCalculateVisibleObjects(_game.Player.CellLocation);
+        _game.Camera.ReCalculateVisibleObjects(_game.Player.Location);
     }
 }
