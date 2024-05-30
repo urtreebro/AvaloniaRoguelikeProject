@@ -22,6 +22,7 @@ public class MainWindowViewModel : ViewModelBase
         ButtonPlayCommand = ReactiveCommand.Create(ButtonPlayClick);
         ButtonOptionsCommand = ReactiveCommand.Create(ButtonOptionsClick);
         ButtonQuitCommand = ReactiveCommand.Create(ButtonQuitClick);
+        ButtonEscapeCommand = ReactiveCommand.Create(ButtonEscapePress);
     }
 
     public ViewModelBase Content
@@ -47,7 +48,21 @@ public class MainWindowViewModel : ViewModelBase
         Environment.Exit(0);
     }
 
+    public void ButtonEscapePress()
+    {
+        if (Content == gameViewModels[1])
+        {
+            ((MainViewModel)gameViewModels[1]).StopGame();
+            Content = gameViewModels[0];
+        }
+        else if (Content == gameViewModels[0])
+        {
+            Environment.Exit(0);
+        }
+    }
+
     public ReactiveCommand<Unit, Unit> ButtonPlayCommand { get; }
     public ReactiveCommand<Unit, Unit> ButtonOptionsCommand { get; }
     public ReactiveCommand<Unit, Unit> ButtonQuitCommand { get; }
- }
+    public ReactiveCommand<Unit, Unit> ButtonEscapeCommand { get; }
+}

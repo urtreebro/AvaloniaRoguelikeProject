@@ -27,4 +27,9 @@ public class MainViewModel : ViewModelBase
         _game.Start();
         _game.Camera.ReCalculateVisibleObjects(_game.Player.Location);
     }
+
+    public void StopGame()
+    {
+        _game.Stop();
+    }
 }
