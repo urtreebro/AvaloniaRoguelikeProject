@@ -8,6 +8,8 @@ namespace AvaloniaRoguelike.Services;
 
 public sealed class AStarPathFindingService : IPathFindingService
 {
+    public static readonly AStarPathFindingService Instance = new();
+
     public IList<PathNode> FindPath(
         GameField gameField,
         CellLocation from,

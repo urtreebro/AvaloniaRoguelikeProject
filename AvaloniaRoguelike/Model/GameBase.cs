@@ -1,8 +1,7 @@
 ﻿using Avalonia.Threading;
 using ReactiveUI;
 using System;
-using ReactiveUI;
-using AvaloniaRoguelike.ViewModels;
+using System.Diagnostics;
 
 namespace AvaloniaRoguelike.Model;
 
@@ -17,6 +16,10 @@ public abstract class GameBase : ReactiveObject
 
     private void DoTick()
     {
+        if (!_timer.IsEnabled)
+        {
+            return;
+        }
         try
         {
             Tick();
@@ -24,7 +27,7 @@ public abstract class GameBase : ReactiveObject
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.ToString());
+            Debug.WriteLine(e.ToString());
         }
     }
 
@@ -35,6 +38,6 @@ public abstract class GameBase : ReactiveObject
     public long CurrentTick { get; private set; }
     public int Lvl { get; protected set; }
 
-    public void Start() => _timer.IsEnabled = true;
-    public void Stop() => _timer.IsEnabled = false;
+    public virtual void Start() => _timer.IsEnabled = true;
+    public virtual void Stop() => _timer.IsEnabled = false;
 }

@@ -10,10 +10,7 @@ public sealed class Camera : ReactiveObject
     public const int Width = 24;
     public const int Height = 16;
 
-    public Camera()
-    {
-        _offset = new Vector(0,0);
-    }
+    public Camera() => _offset = new Vector(0, 0);
 
     public Vector Offset
     {
@@ -24,7 +21,7 @@ public sealed class Camera : ReactiveObject
         }
     }
 
-    public void ReCalculateVisibleObjects(Point playerLocation)
+    public void MoveCamera(Point playerLocation)
     {
         double offsetX = playerLocation.X / 2;
         double offsetY = playerLocation.Y / 2;

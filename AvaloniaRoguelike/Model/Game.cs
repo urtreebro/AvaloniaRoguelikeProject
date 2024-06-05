@@ -2,14 +2,16 @@
 using System.Linq;
 using ReactiveUI;
 using Avalonia.Input;
-using System;
 
 namespace AvaloniaRoguelike.Model;
 
 public class Game : GameBase
 {
     private GameField _field;
+    private Player _player;
     private Camera _camera;
+    private bool _playerViewVisible = false;
+    private int _playerViewWidth = 0;
     private readonly Dictionary<Key, Facing> _keyFacingPairs = new()
     {
         { Key.W, Facing.North},
@@ -18,10 +20,14 @@ public class Game : GameBase
         { Key.D, Facing.East}
     };
 
-    public Game(GameField field)
+    public Game()
     {
-        Field = field;
         _camera = new Camera();
+        Field = new GameField(0);
+        var startCoordinates = Field.GetPassableCoords();
+        _player = new Player(new CellLocation(startCoordinates));
+        _player.SetField(Field);
+        Field.AddPlayer(_player);
         MoveCamera();
     }
 
@@ -43,10 +49,50 @@ public class Game : GameBase
         }
     }
 
+    public bool PlayerViewVisible
+    {
+        get { return _playerViewVisible; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _playerViewVisible, value);
+        }
+    }
+
+    public int PlayerViewWidth
+    {
+        get { return _playerViewWidth; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _playerViewWidth, value);
+        }
+    }
 
     public Player Player
     {
         get { return Field.Player; }
+    }
+
+    public void SetPlayerName(string name)
+    {
+        _player.Name = name;
+    }
+
+    public override void Start()
+    {
+        base.Start();
+    }
+
+    public override void Stop()
+    {
+        base.Stop();
+    }
+
+    public void OpenClosePlayerView()
+    {
+        PlayerViewVisible = !PlayerViewVisible;
+        PlayerViewWidth = PlayerViewWidth == 300
+            ? 0
+            : 300;
     }
 
     protected override void Tick()
@@ -62,6 +108,7 @@ public class Game : GameBase
         if (Player.CellLocation.ToPoint() == Field.Exit.Location)
         {
             Field = new(Lvl);
+            Field.AddPlayer(_player);
             MoveCamera();
         }
 
@@ -73,7 +120,7 @@ public class Game : GameBase
 
     private void MoveCamera()
     {
-        Camera.ReCalculateVisibleObjects(Player.Location);
+        Camera.MoveCamera(Player.Location);
     }
 
     private void CheckLastKeyPressed()
@@ -87,9 +134,6 @@ public class Game : GameBase
             case Key.D:
                 SetPlayerMovingTarget(key);
                 MoveCamera();
-                break;
-            case Key.I:
-                // TODO: inventory view
                 break;
             case Key.X:
                 Field.Player.Attack();

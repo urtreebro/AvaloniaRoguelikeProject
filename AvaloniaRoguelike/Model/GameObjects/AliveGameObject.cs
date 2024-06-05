@@ -1,5 +1,4 @@
-﻿using ReactiveUI;
-using System;
+﻿using System;
 
 namespace AvaloniaRoguelike.Model;
 
@@ -10,6 +9,12 @@ public abstract class AliveGameObject : MovingGameObject, IAlive
         CellLocation location,
         Facing facing) 
         : base(field, location, facing) 
+    { }
+
+    protected AliveGameObject(
+        CellLocation location,
+        Facing facing)
+        : base(location, facing)
     { }
 
     public int Damage

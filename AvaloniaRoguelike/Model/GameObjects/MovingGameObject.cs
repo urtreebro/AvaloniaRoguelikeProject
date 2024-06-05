@@ -33,7 +33,14 @@ public abstract class MovingGameObject : GameObject
         _field = field;
         Facing = facing;
         CellLocation = TargetCellLocation = location;
-        _pathFindingService = new AStarPathFindingService();
+        _pathFindingService = AStarPathFindingService.Instance;
+    }
+
+    public MovingGameObject(
+        CellLocation location,
+        Facing facing)
+        : this(null, location, facing)
+    {
     }
 
     public override int Layer => 1;
@@ -80,6 +87,8 @@ public abstract class MovingGameObject : GameObject
     public bool IsMoving => TargetCellLocation != CellLocation;
 
     protected virtual double SpeedFactor => (double)1 / 15; // TODO: Read from config
+
+    protected virtual void SetFieldInner(GameField field) => _field = field;
 
     public virtual void DoMainLogicEachGameTick()
     {

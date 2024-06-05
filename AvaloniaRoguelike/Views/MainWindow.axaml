@@ -15,8 +15,8 @@
         WindowState="Maximized"
         x:Class="AvaloniaRoguelike.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-				Design.DataContext="{x:Static model:GameField.DesignInstance}"
-				Content="{Binding Content}">
+        Design.DataContext="{x:Static model:GameField.DesignInstance}"
+        Content="{Binding Content}">
 
 	<Window.Styles >
 		<Style Selector="ItemsControl > ContentPresenter">
@@ -35,9 +35,10 @@
 			<Setter Property="Opacity" Value="0.5"/>
 		</Style>
 	</Window.Styles>
-  
+
   <Window.KeyBindings>
     <KeyBinding Gesture="Escape" Command="{Binding ButtonEscapeCommand, Mode=OneWay}" />
+    <KeyBinding Gesture="I" Command="{Binding OpenCloseInventoryCommand, Mode=OneWay}" />
   </Window.KeyBindings>
 
 </Window>

@@ -1,6 +1,8 @@
 ﻿using AvaloniaRoguelike.Model;
 using ReactiveUI;
 
+using System;
+
 namespace AvaloniaRoguelike.ViewModels;
 
 public class MainViewModel : ViewModelBase
@@ -9,8 +11,7 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        var field = new GameField(0);
-        _game = new Game(field);
+        _game = new Game();
     }
 
     public Game Game
@@ -25,11 +26,17 @@ public class MainViewModel : ViewModelBase
     public void StartGame()
     {
         _game.Start();
-        _game.Camera.ReCalculateVisibleObjects(_game.Player.Location);
+        _game.Camera.MoveCamera(_game.Player.Location);
     }
 
     public void StopGame()
     {
         _game.Stop();
+    }
+
+    public void SetPlayerName(string name)
+    {
+        ArgumentNullException.ThrowIfNull(_game, nameof(_game));
+        _game.SetPlayerName(name);
     }
 }

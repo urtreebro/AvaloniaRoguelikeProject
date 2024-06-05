@@ -10,39 +10,41 @@ public class Player : AliveGameObject, IPlayer
     public const int DEFAULTSPEED = 16;
 
     public Player(
-        GameField field,
-        CellLocation location,
-        Facing facing) 
-        : base(field, location, facing)
+        CellLocation cellLocation) 
+        : base(cellLocation, Facing.East)
     {
         Health = DEFAULTHP;
         Damage = DEFAULTATTACK;
         Speed = DEFAULTSPEED;
         Exp = 0;
-        PlayerLvl = 0;
+        Level = 0;
         Luck = 1;
     }
 
     public int Exp { get; private set; }
-    public int PlayerLvl { get; private set; }
+    public int Level { get; private set; }
     public int Luck { get; private set; }
+    public string Name { get; set; }
+
+    public void SetField(GameField field) => SetFieldInner(field);
 
     public bool IsNewLvl()
     {
-        if (Exp != 0 && Exp == 1000 * Math.Pow(PlayerLvl, 3 / 2)) 
+        if (Exp != 0 && Exp == 1000 * Math.Pow(Level, 3 / 2)) 
             return true;
         return false;
     }
 
     public void LvlUp()
     {
-        PlayerLvl++;
+        Level++;
     }
 
     public void Attack()
     {
         AttackSelectedTarget();
     }
+
     protected override void AttackSelectedTarget()
     {
         var tiles = GetTilesAtSight();

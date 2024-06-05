@@ -38,13 +38,18 @@ public class GameField : ViewModelBase
                 GameObjects.Add(this[x, y]);
             }
         }
-        GameObjects.Add(Player = new Player(this, new CellLocation(GetCoords()), Facing.East));
-        GameObjects.Add(Exit = new Exit(new CellLocation(GetCoords()).ToPoint()));
+        GameObjects.Add(Exit = new Exit(new CellLocation(GetPassableCoords()).ToPoint()));
 
         for (var c = 0; c < 5; c++)
         {
             GameObjects.Add(GetRandomEnemy());
         }
+    }
+
+    public void AddPlayer(Player player)
+    {
+        Player = player;
+        GameObjects.Add(player);
     }
 
     public TerrainTile this[int x, int y]
@@ -69,7 +74,7 @@ public class GameField : ViewModelBase
 
     public Random Random { get; } = new();
 
-    public Player Player { get; }
+    public Player Player { get; private set; }
 
     public Exit Exit { get; }
 
@@ -85,7 +90,7 @@ public class GameField : ViewModelBase
             .ToArray();
     }
 
-    private (int, int) GetCoords()
+    public (int, int) GetPassableCoords()
     {
         int x = Random.Next(0, Width);
         int y = Random.Next(0, Height);
@@ -108,8 +113,8 @@ public class GameField : ViewModelBase
     {
         if (Random.Next(0, 2) == 1)
         {
-            return new Mummy(this, new CellLocation(GetCoords()), GetRandomFacing(), Lvl);
+            return new Mummy(this, new CellLocation(GetPassableCoords()), GetRandomFacing(), Lvl);
         }
-        return new Scarab(this, new CellLocation(GetCoords()), GetRandomFacing(), Lvl);
+        return new Scarab(this, new CellLocation(GetPassableCoords()), GetRandomFacing(), Lvl);
     }
 }
