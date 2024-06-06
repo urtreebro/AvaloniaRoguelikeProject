@@ -93,23 +93,167 @@
 
 		</ScrollViewer>
 
-
-    <views:PlayerView
+    <Grid 
+      Background="Wheat"
+      ColumnDefinitions="*,*"
+      RowDefinitions="auto,*"
       Grid.Row="0"
       Grid.Column="1"
       Grid.RowSpan="2"
       VerticalAlignment="Top"
       Width="{Binding Game.PlayerViewWidth}"
-      IsVisible="{Binding Game.PlayerViewVisible}"
-      IsEnabled="{Binding Game.PlayerViewVisible}" />
-      
-    <StackPanel 
-      Grid.Row="1"
-      Grid.ColumnSpan="2"
-      IsVisible="{Binding Game.PlayerViewVisible}"
-      Background="DarkOrchid">
-			<TextBlock Text="Test" />
-    </StackPanel>
+      IsVisible="{Binding Game.PlayerViewVisible}">
+      <Grid.Styles>
+        <Style Selector="StackPanel > TextBlock">
+          <Setter Property="Margin"  Value="5" />
+        </Style>
+      </Grid.Styles>
+
+      <Grid Grid.Row="0" 
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            RowDefinitions="*,*"
+            ColumnDefinitions="*,*">
+
+        <StackPanel Grid.Row="0" Grid.Column="0"
+                    Orientation="Horizontal" >
+          <TextBlock Text="Name: "
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.Name}" />
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1"
+                    Orientation="Horizontal" >
+          <TextBlock Text="Level: "
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.Level}" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="0"
+                    Orientation="Horizontal" >
+          <TextBlock Text="Current exp: "
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.Experience}" />
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1"
+                    Orientation="Horizontal" >
+          <TextBlock Text="To next lvl: "
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.ExperienceToNextLevel}" />
+        </StackPanel>
+
+      </Grid>
+
+      <StackPanel Grid.Row="1" Grid.Column="0"
+                  HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal">
+
+          <TextBlock Text="Strength"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.Strength}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+
+          <TextBlock Text="Dexterity"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.Dexterity}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Right" />
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+
+          <TextBlock Text="Magic"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.Magic}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+
+          <TextBlock Text="Vitality"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.Vitality}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+
+          <TextBlock Text="Health"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.Health}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+
+          <TextBlock Text="Mana"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.Mana}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+
+        </StackPanel>
+      </StackPanel>
+
+      <StackPanel Grid.Row="1" Grid.Column="1"
+                  HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal">
+
+          <TextBlock Text="Damage"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"
+                     Margin="5,0,0,0" />
+          <TextBlock Text="{Binding Game.Player.MinDamage}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="-"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"
+                     Margin="0" />
+          <TextBlock Text="{Binding Game.Player.MaxDamage}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"
+                     Margin="5,5,0,5" />
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+
+          <TextBlock Text="Chance to hit"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.ToHit}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+
+          <TextBlock Text="Armor class"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Game.Player.ArmorClass}"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+
+        </StackPanel>
+      </StackPanel>
+    </Grid>
 
   </Grid>
 

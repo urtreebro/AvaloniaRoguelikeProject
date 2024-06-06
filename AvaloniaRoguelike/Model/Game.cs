@@ -93,6 +93,7 @@ public class Game : GameBase
         PlayerViewWidth = PlayerViewWidth == 300
             ? 0
             : 300;
+        MoveCamera();
     }
 
     protected override void Tick()

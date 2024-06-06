@@ -17,11 +17,9 @@ public abstract class MovingGameObject : GameObject
     protected MovingGameObject _targetMovingGameObject;
 
     protected int _sightRadius = 3;
-    protected int _attackRadius = 1;
     protected TimeSpan _lastAttackTime = DateTime.Now.TimeOfDay;
     protected TimeSpan _attackCooldown = TimeSpan.FromSeconds(2);
 
-    protected int _health;
     private readonly IPathFindingService _pathFindingService;
 
     public MovingGameObject(
@@ -54,15 +52,6 @@ public abstract class MovingGameObject : GameObject
         }
     }
 
-    public int Health
-    {
-        get { return _health; }
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _health, value);
-        }
-    }
-
     public override CellLocation CellLocation
     {
         get { return _cellLocation; }
@@ -90,14 +79,23 @@ public abstract class MovingGameObject : GameObject
 
     protected virtual void SetFieldInner(GameField field) => _field = field;
 
+    protected virtual bool AdditionalLogicEachGameTick()
+    {
+        _targetMovingGameObject = _field.Player;
+        if (!IsMoving)
+        {
+            SetTarget(_field.Player.CellLocation);
+            return false;
+        }
+        return true;
+    }
+
     public virtual void DoMainLogicEachGameTick()
     {
         // Получить все объекты в поле зрения
         var tiles = GetTilesAtSight();
         // Если среди них есть противник (игрок) - идти к игроку
         var isEnemyInRange = CheckIfEnemyInRange(tiles);
-        // Если игрок на соседней клетке или достижим атакой с текущей - атаковать с заданной частотой
-        //var canAttackEnemy = CheckCanAttackEnemy();
 
         // противник в зоне видимости, но нельзя атаковать - пытаться идти к нему
         // противник в зоне видимости и можно его атаковать - атаковать
@@ -108,8 +106,6 @@ public abstract class MovingGameObject : GameObject
             {
                 SetTarget(_field.Player.CellLocation);
             }
-            //TargetCellLocation = _field.Player.CellLocation;
-            _targetMovingGameObject = _field.Player;
             //var path = _pathFindingService.FindPath(_field, CellLocation, TargetCellLocation);
             //if (path == null)
             //{

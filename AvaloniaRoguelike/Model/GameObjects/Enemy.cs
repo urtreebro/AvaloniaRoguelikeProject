@@ -11,7 +11,6 @@ public abstract class Enemy : AliveGameObject, IEnemy
     {
         EnemyLvl = enemylvl;
         Health = GetHealthByLevel();
-        Damage = GetDamageByLevel();
         Speed = GetSpeedByLevel();
     }
 
@@ -19,6 +18,5 @@ public abstract class Enemy : AliveGameObject, IEnemy
 
     protected override double SpeedFactor => Speed * base.SpeedFactor;
     protected abstract int GetHealthByLevel();
-    protected abstract int GetDamageByLevel();
     protected abstract double GetSpeedByLevel();
 }

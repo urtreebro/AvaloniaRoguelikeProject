@@ -17,17 +17,17 @@ public class Scarab : Enemy
         Facing facing,
         int enemylvl) 
         : base(field, location, facing, enemylvl) 
-    { }
+    {
+        MinDamage = 1;
+        MaxDamage = 4;
+        Experience = 2;
+    }
 
     protected override int GetHealthByLevel()
     {
         return 3 * EnemyLvl + 6;
     }
 
-    protected override int GetDamageByLevel()
-    {
-        return 3 * EnemyLvl + 1;
-    }
     protected override double GetSpeedByLevel()
     {
         return 0.02 * EnemyLvl + 1.2;
