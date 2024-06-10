@@ -55,7 +55,7 @@ public abstract class MovingGameObject : GameObject
     public override CellLocation CellLocation
     {
         get { return _cellLocation; }
-        protected set
+        set
         {
             this.RaiseAndSetIfChanged(ref _cellLocation, value);
             this.RaiseAndSetIfChanged(ref _cellLocation, value, nameof(IsMoving));

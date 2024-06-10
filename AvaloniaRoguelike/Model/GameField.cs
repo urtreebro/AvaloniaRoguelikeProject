@@ -5,6 +5,8 @@ using System.Linq;
 using AvaloniaRoguelike.Services;
 using AvaloniaRoguelike.ViewModels;
 
+using ReactiveUI;
+
 namespace AvaloniaRoguelike.Model;
 
 public class GameField : ViewModelBase
@@ -13,10 +15,11 @@ public class GameField : ViewModelBase
 
     private readonly TerrainTile[,] _map;
     private readonly IMapGeneratingService _mapGeneratingService;
+    private ObservableCollection<GameObject> _gameObjects;
 
     public const double CellSize = 32;
-    public const int Default_Width = 64;
-    public const int Default_Height = 48;
+    public const int Default_Width = 32;
+    public const int Default_Height = 24;
 
     public GameField(int lvl) : this(Default_Width, Default_Height, lvl) { }
 
@@ -40,16 +43,23 @@ public class GameField : ViewModelBase
         }
         GameObjects.Add(Exit = new Exit(new CellLocation(GetPassableCoords()).ToPoint()));
 
-        for (var c = 0; c < 5; c++)
-        {
-            GameObjects.Add(GetRandomEnemy());
-        }
+        //for (var c = 0; c < 5; c++)
+        //{
+        //    GameObjects.Add(GetRandomEnemy());
+        //}
     }
 
     public void AddPlayer(Player player)
     {
         Player = player;
-        GameObjects.Add(player);
+        Player.CellLocation = new CellLocation(GetPassableCoords());
+        GameObjects.Add(Player);
+    }
+
+    public void RemovePlayer()
+    {
+        GameObjects.Remove(Player);
+        Player = null;
     }
 
     public TerrainTile this[int x, int y]
@@ -68,7 +78,14 @@ public class GameField : ViewModelBase
     /// <summary>
     /// 
     /// </summary>
-    public ObservableCollection<GameObject> GameObjects { get; }
+    public ObservableCollection<GameObject> GameObjects
+    {
+        get { return _gameObjects; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _gameObjects, value);
+        }
+    }
 
     public int Lvl { get; }
 

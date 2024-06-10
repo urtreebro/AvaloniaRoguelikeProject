@@ -108,15 +108,17 @@ public class Game : GameBase
 
         if (Player.CellLocation.ToPoint() == Field.Exit.Location)
         {
+            //Field.RemovePlayer();
             Field = new(Lvl);
+            _player.SetField(Field);
             Field.AddPlayer(_player);
             MoveCamera();
         }
 
-        if (Player.IsNewLvl())
-        {
-            LvlUp();
-        }
+        //if (Player.IsNewLvl())
+        //{
+        //    LvlUp();
+        //}
     }
 
     private void MoveCamera()
