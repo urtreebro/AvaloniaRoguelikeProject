@@ -23,7 +23,7 @@ public class GameField : ViewModelBase
 
     public GameField(int lvl) : this(Default_Width, Default_Height, lvl) { }
 
-    public GameField(int width, int height, int lvl)
+    public GameField(int width, int height, int lvl = 1)
     {
         Width = width;
         Height = height;
@@ -43,23 +43,19 @@ public class GameField : ViewModelBase
         }
         GameObjects.Add(Exit = new Exit(new CellLocation(GetPassableCoords()).ToPoint()));
 
-        //for (var c = 0; c < 5; c++)
-        //{
-        //    GameObjects.Add(GetRandomEnemy());
-        //}
+        var enemiesCount = Random.Next(2, Lvl * 2 + 1);
+        for (var c = 0; c < enemiesCount; c++)
+        {
+            GameObjects.Add(GetRandomEnemy());
+        }
     }
 
     public void AddPlayer(Player player)
     {
         Player = player;
         Player.CellLocation = new CellLocation(GetPassableCoords());
+        Player.TargetCellLocation = Player.CellLocation;
         GameObjects.Add(Player);
-    }
-
-    public void RemovePlayer()
-    {
-        GameObjects.Remove(Player);
-        Player = null;
     }
 
     public TerrainTile this[int x, int y]

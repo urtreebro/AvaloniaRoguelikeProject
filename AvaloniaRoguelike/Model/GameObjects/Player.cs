@@ -48,6 +48,11 @@ public class Player : AliveGameObject, IPlayer
         RecalculateStats();
     }
 
+    public Player()
+        : this(default)
+    {
+    }
+
     public int Luck { get; private set; }
     public string Name { get; set; }
 

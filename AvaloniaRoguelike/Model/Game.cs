@@ -23,9 +23,8 @@ public class Game : GameBase
     public Game()
     {
         _camera = new Camera();
-        Field = new GameField(0);
-        var startCoordinates = Field.GetPassableCoords();
-        _player = new Player(new CellLocation(startCoordinates));
+        Field = new GameField(1);
+        _player = new Player();
         _player.SetField(Field);
         Field.AddPlayer(_player);
         MoveCamera();
@@ -108,17 +107,11 @@ public class Game : GameBase
 
         if (Player.CellLocation.ToPoint() == Field.Exit.Location)
         {
-            //Field.RemovePlayer();
-            Field = new(Lvl);
+            Field = new(++Lvl);
             _player.SetField(Field);
             Field.AddPlayer(_player);
             MoveCamera();
         }
-
-        //if (Player.IsNewLvl())
-        //{
-        //    LvlUp();
-        //}
     }
 
     private void MoveCamera()

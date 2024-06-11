@@ -38,6 +38,10 @@
 
 					<ItemsControl.DataTemplates>
 						<DataTemplate DataType="{x:Type model:TerrainTile}">
+              <!--<StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding CellLocation.X}" />
+                <TextBlock Text="{Binding CellLocation.Y}" />
+              </StackPanel>-->
 							<Image Width="32" Height="32"
 										Source="{Binding Type, Converter={x:Static infrastructure:TerrainTileConverter.Instance}}"/>
 						</DataTemplate>
@@ -50,7 +54,6 @@
 									</Style>
 								</Border.Styles>
 								<StackPanel Orientation="Vertical">
-									<TextBlock Text="{Binding Health}" FontSize="8" />
 									<Image Width="32" Height="32"
 												Source="/Assets/Player.png"
 												RenderTransform="{Binding Game.Field.Player.Facing, Converter={x:Static infrastructure:DirectionToMatrixConverter.Instance}}"/>
@@ -196,7 +199,9 @@
                      HorizontalAlignment="Center" />
           <TextBlock Text="{Binding Game.Player.Health}"
                      VerticalAlignment="Center"
-                     HorizontalAlignment="Center" />
+                     HorizontalAlignment="Center"
+                     FontWeight="Heavy"
+                     FontSize="16"/>
 
         </StackPanel>
         <StackPanel Orientation="Horizontal">

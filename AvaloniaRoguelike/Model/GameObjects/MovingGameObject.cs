@@ -66,7 +66,7 @@ public abstract class MovingGameObject : GameObject
     public CellLocation TargetCellLocation
     {
         get { return _targetCellLocation; }
-        private set
+        set
         {
             this.RaiseAndSetIfChanged(ref _targetCellLocation, value);
             this.RaiseAndSetIfChanged(ref _targetCellLocation, value, nameof(IsMoving));
