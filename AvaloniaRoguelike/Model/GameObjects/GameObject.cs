@@ -20,7 +20,7 @@ public abstract class GameObject : ReactiveObject
     public virtual CellLocation CellLocation
     {
         get { return _cellLocation; }
-        protected set
+        set
         {
             this.RaiseAndSetIfChanged(ref _cellLocation, value);
             Location = CellLocation.ToPoint();

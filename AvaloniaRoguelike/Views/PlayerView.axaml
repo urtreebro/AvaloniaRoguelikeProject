@@ -1,0 +1,131 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:AvaloniaRoguelike.ViewModels"
+             mc:Ignorable="d"
+             x:Class="AvaloniaRoguelike.Views.PlayerView"
+             x:DataType="vm:PlayerViewModel"
+             Background="Wheat"
+             BorderThickness="2"
+             BorderBrush="Black"
+             DataContext="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).PlayerViewModel}">
+  <UserControl.Styles>
+    <Style Selector="StackPanel > TextBlock">
+      <Setter Property="Margin"  Value="5" />
+    </Style>
+  </UserControl.Styles>
+  <Grid ColumnDefinitions="*,*"
+        RowDefinitions="auto,*">
+
+    <TextBlock Grid.Row="0" Grid.Column="0"
+               Text="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).PlayerViewModel.Player.Name}"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center" />
+    <StackPanel Grid.Row="0" Grid.Column="1"
+                Orientation="Horizontal" >
+      <TextBlock Text="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).PlayerViewModel.Player.Level}"
+                 VerticalAlignment="Center"
+                 HorizontalAlignment="Center" />
+      <TextBlock Text="{Binding Level}" />
+    </StackPanel>
+    
+    <StackPanel Grid.Row="1" Grid.Column="0"
+                HorizontalAlignment="Center">
+      <StackPanel Orientation="Horizontal">
+
+        <TextBlock Text="Strength"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="20"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+
+        <TextBlock Text="Dexterity"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="20"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right" />
+
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+
+        <TextBlock Text="Magic"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="20"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+
+        <TextBlock Text="Vitality"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="20"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+
+        <TextBlock Text="Health"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="100"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+
+        <TextBlock Text="Mana"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="20"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+
+      </StackPanel>
+    </StackPanel>
+
+    <StackPanel Grid.Row="1" Grid.Column="1"
+                HorizontalAlignment="Center">
+      <StackPanel Orientation="Horizontal">
+
+        <TextBlock Text="Damage"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="1-6"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+
+        <TextBlock Text="Chance to hit"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="40"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+
+        <TextBlock Text="Armor class"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="20"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+
+      </StackPanel>
+    </StackPanel>
+  </Grid>
+</UserControl>

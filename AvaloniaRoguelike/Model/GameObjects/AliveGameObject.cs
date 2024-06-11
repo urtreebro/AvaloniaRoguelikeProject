@@ -1,10 +1,21 @@
 ﻿using ReactiveUI;
+
 using System;
 
 namespace AvaloniaRoguelike.Model;
 
 public abstract class AliveGameObject : MovingGameObject, IAlive
 {
+    private int _health;
+    private int _experience;
+    private int _level;
+    private int _ac;
+    private int _toHit;
+    private int _minDamage;
+    private int _maxDamage;
+    private int _attackRadius = 1;
+    protected AliveGameObject _currentTarget;
+
     protected AliveGameObject(
         GameField field,
         CellLocation location,
@@ -12,17 +23,83 @@ public abstract class AliveGameObject : MovingGameObject, IAlive
         : base(field, location, facing) 
     { }
 
-    public int Damage
-    {
-        get;
-        protected set;
-    }
+    protected AliveGameObject(
+        CellLocation location,
+        Facing facing)
+        : base(location, facing)
+    { }
 
     public double Speed
     {
         get;
         protected set;
     }
+
+    public int Level
+    {
+        get { return _level; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _level, value);
+        }
+    }
+
+    public int Experience
+    {
+        get { return _experience; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _experience, value);
+        }
+    }
+
+    public int Health
+    {
+        get { return _health; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _health, value);
+        }
+    }
+
+    public int MinDamage
+    {
+        get { return _minDamage; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _minDamage, value);
+        }
+    }
+
+    public int MaxDamage
+    {
+        get { return _maxDamage; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _maxDamage, value);
+        }
+    }
+
+    public int ArmorClass
+    {
+        get { return _ac; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _ac, value);
+        }
+    }
+
+    public int ToHit
+    {
+        get { return _toHit; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _toHit, value);
+        }
+    }
+
+    protected virtual void ProcessKillTarget()
+    { }
 
     public override void DoMainLogicEachGameTick()
     {
@@ -43,17 +120,12 @@ public abstract class AliveGameObject : MovingGameObject, IAlive
                 SetTarget(_field.Player.CellLocation);
             }
             //TargetCellLocation = _field.Player.CellLocation;
-            _targetMovingGameObject = _field.Player;
-            //var path = _pathFindingService.FindPath(_field, CellLocation, TargetCellLocation);
-            //if (path == null)
-            //{
-            //    // TODO: MakarovEA, log.Debug?
-            //    return;
-            //}
+            _currentTarget = _field.Player;
             return;
         }
         else if (isEnemyInRange && canAttackEnemy)
         {
+            _currentTarget = _field.Player;
             // атаковать цель
             if (DateTime.Now.TimeOfDay - _lastAttackTime > _attackCooldown)
             {
@@ -64,6 +136,7 @@ public abstract class AliveGameObject : MovingGameObject, IAlive
         }
         else
         {
+            _currentTarget = null;
             _targetMovingGameObject = null;
             // Иначе случайно бродить
             if (!IsMoving)
@@ -80,18 +153,23 @@ public abstract class AliveGameObject : MovingGameObject, IAlive
 
     protected bool CheckCanAttackEnemy()
     {
-        if (_targetMovingGameObject is null)
+        if (_currentTarget is null)
         {
             return false;
         }
-        return IsInRange(_targetMovingGameObject.CellLocation, _attackRadius);
+        return IsInRange(_currentTarget.CellLocation, _attackRadius);
     }
 
     protected virtual void AttackSelectedTarget()
     {
-        if (_targetMovingGameObject.Health > 0)
+        if (_currentTarget.Health > 0)
         {
-            _targetMovingGameObject.Health -= Damage;
+            var damage = Random.Shared.Next(MinDamage, MaxDamage + 1);
+            _currentTarget.Health = Math.Max(_currentTarget.Health - damage, 0);
+            if (_currentTarget.Health == 0)
+            {
+                ProcessKillTarget();
+            }
         }
     }
 }

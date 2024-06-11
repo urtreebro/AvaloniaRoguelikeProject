@@ -1,14 +1,11 @@
-using AvaloniaRoguelike.Model;
+namespace AvaloniaRoguelike.ViewModels;
 
-namespace AvaloniaRoguelike.ViewModels
+public class MainMenuViewModel : ViewModelBase
 {
-    public class MainMenuViewModel : ViewModelBase
+    public MainMenuViewModel()
     {
-        public MainMenuViewModel()
-        {
-        
-        }
-        
-        public string Name { get; set; }
+    
     }
+    
+    public string Name { get; set; }
 }

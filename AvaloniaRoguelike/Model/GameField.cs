@@ -5,6 +5,8 @@ using System.Linq;
 using AvaloniaRoguelike.Services;
 using AvaloniaRoguelike.ViewModels;
 
+using ReactiveUI;
+
 namespace AvaloniaRoguelike.Model;
 
 public class GameField : ViewModelBase
@@ -13,14 +15,15 @@ public class GameField : ViewModelBase
 
     private readonly TerrainTile[,] _map;
     private readonly IMapGeneratingService _mapGeneratingService;
+    private ObservableCollection<GameObject> _gameObjects;
 
     public const double CellSize = 32;
-    public const int Default_Width = 64;
-    public const int Default_Height = 48;
+    public const int Default_Width = 32;
+    public const int Default_Height = 24;
 
     public GameField(int lvl) : this(Default_Width, Default_Height, lvl) { }
 
-    public GameField(int width, int height, int lvl)
+    public GameField(int width, int height, int lvl = 1)
     {
         Width = width;
         Height = height;
@@ -38,13 +41,21 @@ public class GameField : ViewModelBase
                 GameObjects.Add(this[x, y]);
             }
         }
-        GameObjects.Add(Player = new Player(this, new CellLocation(GetCoords()), Facing.East));
-        GameObjects.Add(Exit = new Exit(new CellLocation(GetCoords()).ToPoint()));
+        GameObjects.Add(Exit = new Exit(new CellLocation(GetPassableCoords()).ToPoint()));
 
-        for (var c = 0; c < 5; c++)
+        var enemiesCount = Random.Next(2, Lvl * 2 + 1);
+        for (var c = 0; c < enemiesCount; c++)
         {
             GameObjects.Add(GetRandomEnemy());
         }
+    }
+
+    public void AddPlayer(Player player)
+    {
+        Player = player;
+        Player.CellLocation = new CellLocation(GetPassableCoords());
+        Player.TargetCellLocation = Player.CellLocation;
+        GameObjects.Add(Player);
     }
 
     public TerrainTile this[int x, int y]
@@ -63,13 +74,20 @@ public class GameField : ViewModelBase
     /// <summary>
     /// 
     /// </summary>
-    public ObservableCollection<GameObject> GameObjects { get; }
+    public ObservableCollection<GameObject> GameObjects
+    {
+        get { return _gameObjects; }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _gameObjects, value);
+        }
+    }
 
     public int Lvl { get; }
 
     public Random Random { get; } = new();
 
-    public Player Player { get; }
+    public Player Player { get; private set; }
 
     public Exit Exit { get; }
 
@@ -85,7 +103,7 @@ public class GameField : ViewModelBase
             .ToArray();
     }
 
-    private (int, int) GetCoords()
+    public (int, int) GetPassableCoords()
     {
         int x = Random.Next(0, Width);
         int y = Random.Next(0, Height);
@@ -108,8 +126,8 @@ public class GameField : ViewModelBase
     {
         if (Random.Next(0, 2) == 1)
         {
-            return new Mummy(this, new CellLocation(GetCoords()), GetRandomFacing(), Lvl);
+            return new Mummy(this, new CellLocation(GetPassableCoords()), GetRandomFacing(), Lvl);
         }
-        return new Scarab(this, new CellLocation(GetCoords()), GetRandomFacing(), Lvl);
+        return new Scarab(this, new CellLocation(GetPassableCoords()), GetRandomFacing(), Lvl);
     }
 }
